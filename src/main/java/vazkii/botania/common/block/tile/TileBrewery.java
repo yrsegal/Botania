@@ -31,9 +31,11 @@ import vazkii.botania.api.mana.IManaReceiver;
 import vazkii.botania.api.recipe.RecipeBrew;
 import vazkii.botania.api.state.BotaniaStateProps;
 import vazkii.botania.client.core.helper.RenderHelper;
-import vazkii.botania.common.Botania;
 import vazkii.botania.common.block.ModBlocks;
 import vazkii.botania.common.lib.LibBlockNames;
+import vazkii.botania.common.network.PacketHandler;
+import vazkii.botania.common.network.PacketSparkleFX;
+import vazkii.botania.common.network.PacketWispFX;
 
 // This is mostly copypasta from TileRuneAltar
 public class TileBrewery extends TileSimpleInventory implements ISidedInventory, IManaReceiver {
@@ -81,6 +83,9 @@ public class TileBrewery extends TileSimpleInventory implements ISidedInventory,
 
 	@Override
 	public void updateEntity() {
+		if (worldObj.isRemote)
+			return;
+
 		if(mana > 0 && recipe == null) {
 			for(RecipeBrew recipe : BotaniaAPI.brewRecipes)
 				if(recipe.matches(this)) {
@@ -95,7 +100,7 @@ public class TileBrewery extends TileSimpleInventory implements ISidedInventory,
 		// Update every tick.
 		recieveMana(0);
 
-		if(!worldObj.isRemote && recipe == null) {
+		if(recipe == null) {
 			List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1));
 			for(EntityItem item : items)
 				if(!item.isDead && item.getEntityItem() != null) {
@@ -118,20 +123,21 @@ public class TileBrewery extends TileSimpleInventory implements ISidedInventory,
 					float g = color.getGreen() / 255F;
 					float b = color.getBlue() / 255F;
 					for(int i = 0; i < 5; i++) {
-						Botania.proxy.wispFX(worldObj, pos.getX() + 0.7 - Math.random() * 0.4, pos.getY() + 0.9 - Math.random() * 0.2, pos.getZ() + 0.7 - Math.random() * 0.4, r, g, b, 0.1F + (float) Math.random() * 0.05F, 0.03F - (float) Math.random() * 0.06F, 0.03F + (float) Math.random() * 0.015F, 0.03F - (float) Math.random() * 0.06F);
-						for(int j = 0; j < 2; j++)
-							Botania.proxy.wispFX(worldObj, pos.getX() + 0.7 - Math.random() * 0.4, pos.getY() + 0.9 - Math.random() * 0.2, pos.getZ() + 0.7 - Math.random() * 0.4, 0.2F, 0.2F, 0.2F, 0.1F + (float) Math.random() * 0.2F, 0.03F - (float) Math.random() * 0.06F, 0.03F + (float) Math.random() * 0.015F, 0.03F - (float) Math.random() * 0.06F);
+						PacketHandler.sendToAllNear(new PacketWispFX(pos.getX() + 0.7 - Math.random() * 0.4, pos.getY() + 0.9 - Math.random() * 0.2, pos.getZ() + 0.7 - Math.random() * 0.4, r, g, b, 0.1F + (float) Math.random() * 0.05F, 0.03F - (float) Math.random() * 0.06F, 0.03F + (float) Math.random() * 0.015F, 0.03F - (float) Math.random() * 0.06F),
+								this, 64);
+						for(int j = 0; j < 2; j++) {
+							PacketHandler.sendToAllNear(new PacketWispFX(pos.getX() + 0.7 - Math.random() * 0.4, pos.getY() + 0.9 - Math.random() * 0.2, pos.getZ() + 0.7 - Math.random() * 0.4, 0.2F, 0.2F, 0.2F, 0.1F + (float) Math.random() * 0.2F, 0.03F - (float) Math.random() * 0.06F, 0.03F + (float) Math.random() * 0.015F, 0.03F - (float) Math.random() * 0.06F),
+									this, 64);
+						}
 					}
 				}
 
-				if(mana >= getManaCost() && !worldObj.isRemote) {
+				if(mana >= getManaCost()) {
 					int mana = getManaCost();
 					recieveMana(-mana);
-					if(!worldObj.isRemote) {
-						ItemStack output = recipe.getOutput(getStackInSlot(0));
-						EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output);
-						worldObj.spawnEntityInWorld(outputItem);
-					}
+					ItemStack output = recipe.getOutput(getStackInSlot(0));
+					EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output);
+					worldObj.spawnEntityInWorld(outputItem);
 
 					for(int i = 0; i < getSizeInventory(); i++)
 						setInventorySlotContents(i, null);
@@ -168,9 +174,12 @@ public class TileBrewery extends TileSimpleInventory implements ISidedInventory,
 			float r = color.getRed() / 255F;
 			float g = color.getGreen() / 255F;
 			float b = color.getBlue() / 255F;
-			Botania.proxy.sparkleFX(worldObj, pos.getX() + 0.5 + Math.random() * 0.4 - 0.2, pos.getY() + 1, pos.getZ() + 0.5 + Math.random() * 0.4 - 0.2, r, g, b, (float) Math.random() * 2F + 0.5F, 10);
-			for(int j = 0; j < 2; j++)
-				Botania.proxy.wispFX(worldObj, pos.getX() + 0.7 - Math.random() * 0.4, pos.getY() + 0.9 - Math.random() * 0.2, pos.getZ() + 0.7 - Math.random() * 0.4, 0.2F, 0.2F, 0.2F, 0.1F + (float) Math.random() * 0.2F, 0.05F - (float) Math.random() * 0.1F, 0.05F + (float) Math.random() * 0.03F, 0.05F - (float) Math.random() * 0.1F);
+			PacketHandler.sendToAllNear(new PacketSparkleFX(pos.getX() + 0.5 + Math.random() * 0.4 - 0.2, pos.getY() + 1, pos.getZ() + 0.5 + Math.random() * 0.4 - 0.2, r, g, b, (float) Math.random() * 2F + 0.5F, 10),
+					this, 64);
+			for(int j = 0; j < 2; j++) {
+				PacketHandler.sendToAllNear(new PacketWispFX(pos.getX() + 0.7 - Math.random() * 0.4, pos.getY() + 0.9 - Math.random() * 0.2, pos.getZ() + 0.7 - Math.random() * 0.4, 0.2F, 0.2F, 0.2F, 0.1F + (float) Math.random() * 0.2F, 0.05F - (float) Math.random() * 0.1F, 0.05F + (float) Math.random() * 0.03F, 0.05F - (float) Math.random() * 0.1F),
+						this, 64);
+			}
 		}
 	}
 

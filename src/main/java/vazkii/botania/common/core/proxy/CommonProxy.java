@@ -69,6 +69,7 @@ import vazkii.botania.common.item.ModItems;
 import vazkii.botania.common.lexicon.LexiconData;
 import vazkii.botania.common.lib.LibMisc;
 import vazkii.botania.common.network.GuiHandler;
+import vazkii.botania.common.network.PacketHandler;
 import vazkii.botania.common.world.SkyblockWorldEvents;
 import vazkii.botania.common.world.WorldTypeSkyblock;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -86,6 +87,7 @@ public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		BotaniaAPI.internalHandler = new InternalMethodHandler();
 
+		PacketHandler.init();
 		ConfigHandler.loadConfig(event.getSuggestedConfigurationFile());
 
 		ModBlocks.init();

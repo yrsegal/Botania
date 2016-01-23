@@ -36,6 +36,7 @@ import net.minecraft.util.StatCollector;
 
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.lwjgl.opengl.GL11;
 
 import vazkii.botania.api.BotaniaAPI;
@@ -66,6 +67,8 @@ import vazkii.botania.common.item.ItemManaTablet;
 import vazkii.botania.common.item.ModItems;
 import vazkii.botania.common.lib.LibMisc;
 import vazkii.botania.common.lib.LibObfuscation;
+import vazkii.botania.common.network.PacketHandler;
+import vazkii.botania.common.network.PacketSparkleFX;
 
 public class TilePool extends TileMod implements IManaPool, IDyablePool, IKeyLocked, ISparkAttachable, IThrottledPacket {
 
@@ -137,7 +140,7 @@ public class TilePool extends TileMod implements IManaPool, IDyablePool, IKeyLoc
 	}
 
 	public boolean collideEntityItem(EntityItem item) {
-		if(item.isDead)
+		if(item.worldObj.isRemote || item.isDead)
 			return false;
 
 		boolean didChange = false;
@@ -161,16 +164,14 @@ public class TilePool extends TileMod implements IManaPool, IDyablePool, IKeyLoc
 				if(getCurrentMana() >= mana) {
 					recieveMana(-mana);
 
-					if(!worldObj.isRemote) {
-						stack.stackSize--;
-						if(stack.stackSize == 0)
-							item.setDead();
+					stack.stackSize--;
+					if(stack.stackSize == 0)
+						item.setDead();
 
-						ItemStack output = recipe.getOutput().copy();
-						EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output);
-						ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, outputItem, 105, LibObfuscation.AGE);
-						worldObj.spawnEntityInWorld(outputItem);
-					}
+					ItemStack output = recipe.getOutput().copy();
+					EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output);
+					ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, outputItem, 105, LibObfuscation.AGE);
+					worldObj.spawnEntityInWorld(outputItem);
 
 					craftingFanciness();
 					didChange = true;
@@ -190,10 +191,8 @@ public class TilePool extends TileMod implements IManaPool, IDyablePool, IKeyLoc
 		}
 
 		for(int i = 0; i < 25; i++) {
-			float red = (float) Math.random();
-			float green = (float) Math.random();
-			float blue = (float) Math.random();
-			Botania.proxy.sparkleFX(worldObj, pos.getX() + 0.5 + Math.random() * 0.4 - 0.2, pos.getY() + 1, pos.getZ() + 0.5 + Math.random() * 0.4 - 0.2, red, green, blue, (float) Math.random(), 10);
+			PacketHandler.sendToAllNear(new PacketSparkleFX(pos.getX() + 0.5 + Math.random() * 0.4 - 0.2, pos.getY() + 1, pos.getZ() + 0.5 + Math.random() * 0.4 - 0.2, 10),
+					this, 64);
 		}
 	}
 

@@ -38,6 +38,8 @@ import vazkii.botania.common.Botania;
 import vazkii.botania.common.core.helper.Vector3;
 import vazkii.botania.common.item.ModItems;
 import baubles.common.lib.PlayerHandler;
+import vazkii.botania.common.network.PacketHandler;
+import vazkii.botania.common.network.PacketWispFX;
 
 public class EntitySpark extends Entity implements ISparkEntity {
 
@@ -82,11 +84,10 @@ public class EntitySpark extends Entity implements ISparkEntity {
 		if(first || upgrade == 2 || upgrade == 3)
 			allSparks = SparkHelper.getSparksAround(worldObj, posX, posY, posZ);
 
-		if(first)
-			first = true;
-
 		Collection<ISparkEntity> transfers = getTransfers();
 
+		if (worldObj.isRemote)
+			return;
 
 		if(upgrade != 0) {
 			switch(upgrade) {
@@ -212,8 +213,7 @@ public class EntitySpark extends Entity implements ISparkEntity {
 		float g = 0.4F + 0.3F * (float) Math.random();
 		float b = 0.4F + 0.3F * (float) Math.random();
 		float size = 0.125F + 0.125F * (float) Math.random();
-
-		Botania.proxy.wispFX(worldObj, thisVec.x, thisVec.y, thisVec.z, r, g, b, size, (float) motion.x, (float) motion.y, (float) motion.z);
+		PacketHandler.sendToAllNear(new PacketWispFX(thisVec.x, thisVec.y, thisVec.z, r, g, b, size, (float) motion.x, (float) motion.y, (float) motion.z), this, 64);
 	}
 
 	public static void particleBeam(Entity e1, Entity e2) {

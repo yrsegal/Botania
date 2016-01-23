@@ -1,0 +1,9 @@
+- Gave sparkle and wisp packets, with bitfields defining what things should actually be sent over the network and what should be regenerated clientside
+- Serversidings:
+    - Brewery:
+        - Mostly good to go
+        - HUD not syncing
+    - Pool:
+        - Infusion good to go
+    - Sparks:
+        - Serversided completely, implications not yet known (mana network)
