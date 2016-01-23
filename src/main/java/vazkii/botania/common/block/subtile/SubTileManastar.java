@@ -18,6 +18,8 @@ import vazkii.botania.api.subtile.SubTileEntity;
 import vazkii.botania.common.Botania;
 import vazkii.botania.common.lexicon.LexiconData;
 import vazkii.botania.common.lib.LibMisc;
+import vazkii.botania.common.network.PacketHandler;
+import vazkii.botania.common.network.PacketWispFX;
 
 public class SubTileManastar extends SubTileEntity {
 
@@ -26,6 +28,9 @@ public class SubTileManastar extends SubTileEntity {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
+
+		if (supertile.getWorld().isRemote)
+			return;
 
 		int mana = 0;
 		for(EnumFacing dir : LibMisc.CARDINAL_DIRECTIONS) {
@@ -36,7 +41,8 @@ public class SubTileManastar extends SubTileEntity {
 
 		if(manaLastTick != -1 && mana != manaLastTick && Math.random() > 0.6) {
 			boolean more = mana > manaLastTick;
-			Botania.proxy.wispFX(supertile.getWorld(), supertile.getPos().getX() + 0.55 + Math.random() * 0.2 - 0.1, supertile.getPos().getY() + 0.75 + Math.random() * 0.2 - 0.1, supertile.getPos().getZ() + 0.5, more ? 0.05F : 1F, 0.05F, more ? 1F : 0.05F, (float) Math.random() / 7, (float) -Math.random() / 50);
+			PacketHandler.sendToAllNear(new PacketWispFX(supertile.getPos().getX() + 0.55 + Math.random() * 0.2 - 0.1, supertile.getPos().getY() + 0.75 + Math.random() * 0.2 - 0.1, supertile.getPos().getZ() + 0.5, more ? 0.05F : 1F, 0.05F, more ? 1F : 0.05F, (float) Math.random() / 7, 0, (float) Math.random() / 50, 0),
+					supertile, 64);
 		}
 
 		if(ticksExisted % 60 == 0)

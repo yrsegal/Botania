@@ -40,6 +40,8 @@ import vazkii.botania.common.lib.LibItemNames;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import vazkii.botania.common.network.PacketHandler;
+import vazkii.botania.common.network.PacketWispFX;
 
 public class ItemGrassSeeds extends ItemMod implements IFloatingFlowerVariant {
 
@@ -77,6 +79,9 @@ public class ItemGrassSeeds extends ItemMod implements IFloatingFlowerVariant {
 
 	@Override
 	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, BlockPos pos, EnumFacing side, float par8, float par9, float par10) {
+		if (par3World.isRemote)
+			return true;
+
 		IBlockState state = par3World.getBlockState(pos);
 
 		if((state.getBlock() == Blocks.dirt && state.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT) || (state.getBlock() == Blocks.grass && par1ItemStack.getItemDamage() != 0)) {
@@ -145,7 +150,7 @@ public class ItemGrassSeeds extends ItemMod implements IFloatingFlowerVariant {
 
 				float velMul = 0.025F;
 
-				Botania.proxy.wispFX(par3World, pos.getX() + 0.5 + x, pos.getY() + 0.5 + y, pos.getZ() + 0.5 + z, r, g, b, (float) Math.random() * 0.15F + 0.15F, (float) -x * velMul, (float) -y * velMul, (float) -z * velMul);
+				PacketHandler.sendToAllNear(new PacketWispFX(pos.getX() + 0.5 + x, pos.getY() + 0.5 + y, pos.getZ() + 0.5 + z, r, g, b, (float) Math.random() * 0.15F + 0.15F, (float) -x * velMul, (float) -y * velMul, (float) -z * velMul), par2EntityPlayer, 64);
 			}
 
 			par1ItemStack.stackSize--;

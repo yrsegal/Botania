@@ -1,4 +1,7 @@
 - Gave sparkle and wisp packets, with bitfields defining what things should actually be sent over the network and what should be regenerated clientside
+- GOAL: Serverside ALL logic
+- Leave as many particles on the client as possible, but when particles are directly linked to logic events, must be sent from server
+
 - Serversidings:
     - Brewery:
         - Mostly good to go
@@ -7,3 +10,10 @@
         - Infusion good to go
     - Sparks:
         - Serversided completely, implications not yet known (mana network)
+    - Generating flora:
+    - Functional flora:
+    - Other flora:
+        - Pure daisy: good to go (perhaps sync "active" state and use that for sparklefx)
+        - Manastar: good to go
+    - Black Lotus dissolution: good to go
+    - Grass Seeds: good to go

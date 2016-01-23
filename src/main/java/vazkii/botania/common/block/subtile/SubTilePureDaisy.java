@@ -23,6 +23,9 @@ import vazkii.botania.api.subtile.SubTileEntity;
 import vazkii.botania.common.Botania;
 import vazkii.botania.common.core.handler.ConfigHandler;
 import vazkii.botania.common.lexicon.LexiconData;
+import vazkii.botania.common.network.PacketHandler;
+import vazkii.botania.common.network.PacketSparkleFX;
+import vazkii.botania.common.network.PacketWispFX;
 
 public class SubTilePureDaisy extends SubTileEntity {
 
@@ -50,6 +53,9 @@ public class SubTilePureDaisy extends SubTileEntity {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (supertile.getWorld().isRemote)
+			return;
+
 		positionAt++;
 		if(positionAt == POSITIONS.length)
 			positionAt = 0;
@@ -70,7 +76,8 @@ public class SubTilePureDaisy extends SubTileEntity {
 			if(recipe != null) {
 				ticksRemaining[positionAt] = ticksRemaining[positionAt] - 1;
 
-				Botania.proxy.sparkleFX(supertile.getWorld(), coords.getX() + Math.random(), coords.getY() + Math.random(), coords.getZ() + Math.random(), 1F, 1F, 1F, (float) Math.random(), 5);
+				PacketHandler.sendToAllNear(new PacketSparkleFX(coords.getX() + Math.random(), coords.getY() + Math.random(), coords.getZ() + Math.random(), 1F, 1F, 1F, (float) Math.random(), 5),
+						supertile, 64);
 
 				if(ticksRemaining[positionAt] <= 0) {
 					ticksRemaining[positionAt] = TIME_PER;
@@ -81,7 +88,7 @@ public class SubTilePureDaisy extends SubTileEntity {
 							double y = coords.getY() + Math.random() + 0.5;
 							double z = coords.getZ() + Math.random();
 
-							Botania.proxy.wispFX(supertile.getWorld(), x, y, z, 1F, 1F, 1F, (float) Math.random() / 2F);
+							PacketHandler.sendToAllNear(new PacketWispFX(x, y, z, 1F, 1F, 1F, (float) Math.random() / 2F), supertile, 64);
 						}
 						if(ConfigHandler.blockBreakParticles)
 							supertile.getWorld().playAuxSFX(2001, coords, Block.getStateId(recipe.getOutputState()));
