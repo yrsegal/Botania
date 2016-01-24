@@ -78,11 +78,11 @@ public class ItemGrassHorn extends ItemMod {
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityPlayer player, int time) {
-		if(time != getMaxItemUseDuration(stack) && time % 5 == 0)
-			breakGrass(player.worldObj, stack, stack.getItemDamage(), new BlockPos(player));
-
-		if(!player.worldObj.isRemote)
+		if(!player.worldObj.isRemote) {
+			if(time != getMaxItemUseDuration(stack) && time % 5 == 0)
+				breakGrass(player.worldObj, stack, stack.getItemDamage(), new BlockPos(player));
 			player.worldObj.playSoundAtEntity(player, "note.bassattack", 1F, 0.001F);
+		}
 	}
 
 	public static void breakGrass(World world, ItemStack stack, int stackDmg, BlockPos srcPos) {
@@ -113,7 +113,7 @@ public class ItemGrassHorn extends ItemMod {
 
 			if(block instanceof IHornHarvestable && ((IHornHarvestable) block).hasSpecialHornHarvest(world, currCoords, stack, type))
 				((IHornHarvestable) block).harvestByHorn(world, currCoords, stack, type);
-			else if(!world.isRemote) {
+			else {
 				world.setBlockToAir(currCoords);
 				if(ConfigHandler.blockBreakParticles)
 					world.playAuxSFX(2001, currCoords, Block.getStateId(state));

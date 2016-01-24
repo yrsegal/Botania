@@ -33,7 +33,7 @@ public class SubTileAgricarnation extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if(ticksExisted % 6 == 0 && redstoneSignal == 0) {
+		if(!supertile.getWorld().isRemote && ticksExisted % 6 == 0 && redstoneSignal == 0) {
 			int range = getRange();
 			int x = supertile.getPos().getX() + supertile.getWorld().rand.nextInt(range * 2 + 1) - range;
 			int z = supertile.getPos().getZ() + supertile.getWorld().rand.nextInt(range * 2 + 1) - range;

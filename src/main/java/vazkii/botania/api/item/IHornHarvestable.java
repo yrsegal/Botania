@@ -33,7 +33,7 @@ public interface IHornHarvestable {
 	public boolean hasSpecialHornHarvest(World world, BlockPos pos, ItemStack stack, EnumHornType hornType);
 
 	/**
-	 * Called to harvest by a horn.
+	 * Called to harvest by a horn serverside.
 	 * Note that the stack param can be null if it's a drum breaking it.
 	 */
 	public void harvestByHorn(World world, BlockPos pos, ItemStack stack, EnumHornType hornType);

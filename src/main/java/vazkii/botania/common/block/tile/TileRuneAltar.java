@@ -42,6 +42,10 @@ import vazkii.botania.common.core.helper.Vector3;
 import vazkii.botania.common.item.ModItems;
 import vazkii.botania.common.lib.LibBlockNames;
 import vazkii.botania.common.lib.LibObfuscation;
+import vazkii.botania.common.network.PacketHandler;
+import vazkii.botania.common.network.PacketLightningFX;
+import vazkii.botania.common.network.PacketSparkleFX;
+import vazkii.botania.common.network.PacketWispFX;
 
 public class TileRuneAltar extends TileSimpleInventory implements ISidedInventory, IManaReceiver {
 
@@ -72,8 +76,7 @@ public class TileRuneAltar extends TileSimpleInventory implements ISidedInventor
 			EntityItem item = new EntityItem(worldObj, getPos().getX() + 0.5, getPos().getY() + 1, getPos().getZ() + 0.5, new ItemStack(ModBlocks.livingrock));
 			ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, item, 40, LibObfuscation.PICKUP_DELAY);
 			item.motionX = item.motionY = item.motionZ = 0;
-			if(!worldObj.isRemote)
-				worldObj.spawnEntityInWorld(item);
+			worldObj.spawnEntityInWorld(item);
 
 			return true;
 		}
@@ -108,10 +111,13 @@ public class TileRuneAltar extends TileSimpleInventory implements ISidedInventor
 	@Override
 	public void updateEntity() {
 
+		if (worldObj.isRemote)
+			return;
+
 		// Update every tick.
 		recieveMana(0);
 
-		if(!worldObj.isRemote && manaToGet == 0) {
+		if(manaToGet == 0) {
 			List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 1, 1)));
 			for(EntityItem item : items)
 				if(!item.isDead && item.getEntityItem() != null && item.getEntityItem().getItem() != Item.getItemFromBlock(ModBlocks.livingrock)) {
@@ -122,17 +128,17 @@ public class TileRuneAltar extends TileSimpleInventory implements ISidedInventor
 		}
 
 
-		if(worldObj.isRemote && manaToGet > 0 && mana >= manaToGet) {
+		if(manaToGet > 0 && mana >= manaToGet) {
 			if(worldObj.rand.nextInt(20) == 0) {
 				Vector3 vec = Vector3.fromTileEntityCenter(this);
 				Vector3 endVec = vec.copy().add(0, 2.5, 0);
-				Botania.proxy.lightningFX(worldObj, vec, endVec, 2F, 0x00948B, 0x00E4D7);
+				PacketHandler.sendToAllNear(new PacketLightningFX(vec, endVec, 2F, 0x00948B, 0x00E4D7), this, 64);
 			}
 		}
 
 		if(cooldown > 0) {
 			cooldown--;
-			Botania.proxy.wispFX(getWorld(), pos.getX() + Math.random(), pos.getY() + 0.8, pos.getZ() + Math.random(), 0.2F, 0.2F, 0.2F, 0.2F, -0.025F);
+			PacketHandler.sendToAllNear(new PacketWispFX(pos.getX() + Math.random(), pos.getY() + 0.8, pos.getZ() + Math.random(), 0.2F, 0.2F, 0.2F, 0.2F, -0.025F), this, 64);
 		}
 
 		int newSignal = 0;
@@ -225,33 +231,29 @@ public class TileRuneAltar extends TileSimpleInventory implements ISidedInventor
 			if(livingrock != null) {
 				int mana = recipe.getManaUsage();
 				recieveMana(-mana);
-				if(!worldObj.isRemote) {
-					ItemStack output = recipe.getOutput().copy();
-					EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output);
-					worldObj.spawnEntityInWorld(outputItem);
-					currentRecipe = null;
-					cooldown = 60;
-				}
+				ItemStack output = recipe.getOutput().copy();
+				EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output);
+				worldObj.spawnEntityInWorld(outputItem);
+				currentRecipe = null;
+				cooldown = 60;
 
 				saveLastRecipe();
-				if(!worldObj.isRemote) {
-					for(int i = 0; i < getSizeInventory(); i++) {
-						ItemStack stack = getStackInSlot(i);
-						if(stack != null) {
-							if(stack.getItem() == ModItems.rune && (player == null || !player.capabilities.isCreativeMode)) {
-								EntityItem outputItem = new EntityItem(worldObj, getPos().getX() + 0.5, getPos().getY() + 1.5, getPos().getZ() + 0.5, stack.copy());
-								worldObj.spawnEntityInWorld(outputItem);
-							}
-
-							setInventorySlotContents(i, null);
+				for(int i = 0; i < getSizeInventory(); i++) {
+					ItemStack stack = getStackInSlot(i);
+					if(stack != null) {
+						if(stack.getItem() == ModItems.rune && (player == null || !player.capabilities.isCreativeMode)) {
+							EntityItem out = new EntityItem(worldObj, getPos().getX() + 0.5, getPos().getY() + 1.5, getPos().getZ() + 0.5, stack.copy());
+							worldObj.spawnEntityInWorld(out);
 						}
-					}
 
-					ItemStack livingrockItem = livingrock.getEntityItem();
-					livingrockItem.stackSize--;
-					if(livingrockItem.stackSize == 0)
-						livingrock.setDead();
+						setInventorySlotContents(i, null);
+					}
 				}
+
+				ItemStack livingrockItem = livingrock.getEntityItem();
+				livingrockItem.stackSize--;
+				if(livingrockItem.stackSize == 0)
+					livingrock.setDead();
 
 				craftingFanciness();
 			}
@@ -261,10 +263,7 @@ public class TileRuneAltar extends TileSimpleInventory implements ISidedInventor
 	public void craftingFanciness() {
 		worldObj.playSoundEffect(pos.getX(), pos.getY(), pos.getZ(), "botania:runeAltarCraft", 1F, 1F);
 		for(int i = 0; i < 25; i++) {
-			float red = (float) Math.random();
-			float green = (float) Math.random();
-			float blue = (float) Math.random();
-			Botania.proxy.sparkleFX(worldObj, pos.getX() + 0.5 + Math.random() * 0.4 - 0.2, pos.getY() + 1, pos.getZ() + 0.5 + Math.random() * 0.4 - 0.2, red, green, blue, (float) Math.random(), 10);
+			PacketHandler.sendToAllNear(new PacketSparkleFX(pos.getX() + 0.5 + Math.random() * 0.4 - 0.2, pos.getY() + 1, pos.getZ() + 0.5 + Math.random() * 0.4 - 0.2, 10), this, 64);
 		}
 	}
 

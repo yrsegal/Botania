@@ -76,7 +76,7 @@ public class SubTilePureDaisy extends SubTileEntity {
 			if(recipe != null) {
 				ticksRemaining[positionAt] = ticksRemaining[positionAt] - 1;
 
-				PacketHandler.sendToAllNear(new PacketSparkleFX(coords.getX() + Math.random(), coords.getY() + Math.random(), coords.getZ() + Math.random(), 1F, 1F, 1F, (float) Math.random(), 5),
+				PacketHandler.sendToAllNear(new PacketSparkleFX(coords.getX() + Math.random(), coords.getY() + Math.random(), coords.getZ() + Math.random(), 1F, 1F, 1F, 5),
 						supertile, 64);
 
 				if(ticksRemaining[positionAt] <= 0) {

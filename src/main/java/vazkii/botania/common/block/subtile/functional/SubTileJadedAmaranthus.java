@@ -32,6 +32,9 @@ public class SubTileJadedAmaranthus extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (supertile.getWorld().isRemote)
+			return;
+
 		if(redstoneSignal > 0)
 			return;
 

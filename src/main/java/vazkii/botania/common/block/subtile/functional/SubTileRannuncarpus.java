@@ -63,7 +63,7 @@ public class SubTileRannuncarpus extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if(redstoneSignal > 0)
+		if(supertile.getWorld().isRemote || redstoneSignal > 0)
 			return;
 
 		if(ticksExisted % 10 == 0) {
@@ -101,7 +101,7 @@ public class SubTileRannuncarpus extends SubTileFunctional {
 					}
 
 
-					if(!validPositions.isEmpty() && !supertile.getWorld().isRemote) {
+					if(!validPositions.isEmpty()) {
 						BlockPos coords = validPositions.get(supertile.getWorld().rand.nextInt(validPositions.size()));
 
 						Block blockToPlace = null;
@@ -133,11 +133,9 @@ public class SubTileRannuncarpus extends SubTileFunctional {
 								if(stackItem instanceof IFlowerPlaceable)
 									((IFlowerPlaceable) stackItem).onBlockPlacedByFlower(stack, this, coords);
 
-								if(!supertile.getWorld().isRemote) {
-									stack.stackSize--;
-									if(stack.stackSize == 0)
-										item.setDead();
-								}
+								stack.stackSize--;
+								if(stack.stackSize == 0)
+									item.setDead();
 
 								if(mana > 1)
 									mana--;

@@ -51,10 +51,10 @@ public class SubTileMarimorphosis extends SubTileFunctional {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if(redstoneSignal > 0)
+		if(supertile.getWorld().isRemote || redstoneSignal > 0)
 			return;
 
-		if(!supertile.getWorld().isRemote && mana >= COST && ticksExisted % 2 == 0) {
+		if(mana >= COST && ticksExisted % 2 == 0) {
 			BlockPos coords = getCoordsToPut();
 			if(coords != null) {
 				ItemStack stack = getStoneToPut(coords);

@@ -10,10 +10,55 @@
         - Infusion good to go
     - Sparks:
         - Serversided completely, implications not yet known (mana network)
-    - Generating flora:
+    - Generating flora: (mana syncing will need to be reevalled)
+        - Rosa arcana: good to go
+        - Dandelifeon: already serversided
+        - Gourmaryllis: already serversided
+        - Kekimurus: good to go
+        - Rafflowsia: good to go
+        - spectrolus: good to go
+        - dandelifeon:
+        - daybloom:
+        - endoflame:
+        - entropinnyum:
+        - gourmaryllis:
+        - hydroangeas:
+        - narslimmus:
+        - nightshade:
+        - thermalily:
     - Functional flora:
+        - agricarnation: untested
+        - bellethorn/dreadthorn: untested
+        - bubbell: untested
+        - clayconia: already serversided
+        - daffomill: n/a (must be present on both sides, may have trouble with clientside mana later)
+        - exoflame: untested
+        - fallen kanade: already serversided
+        - heisei dream: untested
+        - hopperhock:
+        - hyacidus: untested
+        - loonium: untested
+        - marimorphosis: untested
+        - medumone: untested
+        - orechid[ignem]: untested
+        - pollidisiac: already serversided
+        - rannuncarpus: untested
+        - solegnolia: n/a (must be present on both sides)
+        - spectranthemum: good to go
+        - tangleberrie/jiyuulia:
+        - tigerseye: untested
+        - vinculotus: good to go
     - Other flora:
         - Pure daisy: good to go (perhaps sync "active" state and use that for sparklefx)
         - Manastar: good to go
-    - Black Lotus dissolution: good to go
-    - Grass Seeds: good to go
+    - Blocks (tileless):
+        - Terra plate: good to go
+    - Items:
+        - Black Lotus dissolution: good to go
+        - Grass Seeds: good to go
+        - Horns: good to go
+    - Tiles:
+        - Drums: good to go
+        - Mana Detector: good to go
+        - Runic altar: Should be good to go
+

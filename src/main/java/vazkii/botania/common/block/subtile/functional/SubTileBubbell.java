@@ -38,6 +38,9 @@ public class SubTileBubbell extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (supertile.getWorld().isRemote)
+			return;
+
 		if(mana > COST_PER_TICK) {
 			mana -= COST_PER_TICK;
 

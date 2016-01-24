@@ -43,7 +43,7 @@ public class SubTileBellethorn extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if(redstoneSignal > 0)
+		if(supertile.getWorld().isRemote || redstoneSignal > 0)
 			return;
 
 		final int manaToUse = getManaCost();

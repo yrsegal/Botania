@@ -44,7 +44,7 @@ public class SubTileRafflowsia extends SubTileGenerating {
 
 		int mana = 2100;
 
-		if(getMaxMana() - this.mana >= mana && !supertile.getWorld().isRemote && ticksExisted % 40 == 0) {
+		if(!supertile.getWorld().isRemote && getMaxMana() - this.mana >= mana && ticksExisted % 40 == 0) {
 			for(int i = 0; i < RANGE * 2 + 1; i++)
 				for(int j = 0; j < RANGE * 2 + 1; j++)
 					for(int k = 0; k < RANGE * 2 + 1; k++) {

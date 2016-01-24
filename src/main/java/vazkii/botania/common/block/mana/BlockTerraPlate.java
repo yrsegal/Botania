@@ -47,12 +47,17 @@ public class BlockTerraPlate extends BlockModContainer implements ILexiconable {
 
 	@Override
 	public boolean onBlockActivated(World worldObj, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing s, float xs, float ys, float zs) {
+		if (worldObj.isRemote)
+			return true;
+
 		ItemStack stack = player.getCurrentEquippedItem();
 		if(stack != null && stack.getItem() == ModItems.manaResource && stack.getItemDamage() < 3) {
 			if(player == null || !player.capabilities.isCreativeMode) {
 				stack.stackSize--;
-				if(stack.stackSize == 0 && player != null)
+				if(stack.stackSize == 0 && player != null) {
 					player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+					player.openContainer.detectAndSendChanges();
+				}
 			}
 
 			ItemStack target = stack.copy();
@@ -60,8 +65,7 @@ public class BlockTerraPlate extends BlockModContainer implements ILexiconable {
 			EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, target);
 			ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, item, 40, LibObfuscation.PICKUP_DELAY);
 			item.motionX = item.motionY = item.motionZ = 0;
-			if(!worldObj.isRemote)
-				worldObj.spawnEntityInWorld(item);
+			worldObj.spawnEntityInWorld(item);
 
 			return true;
 		}

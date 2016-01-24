@@ -13,12 +13,14 @@ package vazkii.botania.common.block.subtile.functional;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import vazkii.botania.api.lexicon.LexiconEntry;
 import vazkii.botania.api.mana.IManaItem;
@@ -48,9 +50,10 @@ public class SubTileSpectranthemum extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if(redstoneSignal == 0 && supertile.getWorld().isBlockLoaded(bindPos)) {
-			BlockPos pos = supertile.getPos();
+		if (supertile.getWorld().isRemote)
+			return;
 
+		if(redstoneSignal == 0 && supertile.getWorld().isBlockLoaded(bindPos, false)) {
 			boolean did = false;
 
 			List<EntityItem> items = supertile.getWorld().getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(supertile.getPos().add(-RANGE, -RANGE, -RANGE), supertile.getPos().add(RANGE + 1, RANGE + 1, RANGE + 1)));
@@ -73,10 +76,8 @@ public class SubTileSpectranthemum extends SubTileFunctional {
 						item.getEntityData().setBoolean(TAG_TELEPORTED, true);
 						item.motionX = item.motionY = item.motionZ = 0;
 						spawnExplosionParticles(item, 10);
-						if(!supertile.getWorld().isRemote) {
-							mana -= cost;
-							did = true;
-						}
+						mana -= cost;
+						did = true;
 					}
 				}
 			}
@@ -93,7 +94,8 @@ public class SubTileSpectranthemum extends SubTileFunctional {
 			double d1 = item.worldObj.rand.nextGaussian() * m;
 			double d2 = item.worldObj.rand.nextGaussian() * m;
 			double d3 = 10.0D;
-			item.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, item.posX + item.worldObj.rand.nextFloat() * item.width * 2.0F - item.width - d0 * d3, item.posY + item.worldObj.rand.nextFloat() * item.height - d1 * d3, item.posZ + item.worldObj.rand.nextFloat() * item.width * 2.0F - item.width - d2 * d3, d0, d1, d2);
+			((WorldServer) item.worldObj).spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, item.posX + item.worldObj.rand.nextFloat() * item.width * 2.0F - item.width - d0 * d3, item.posY + item.worldObj.rand.nextFloat() * item.height - d1 * d3, item.posZ + item.worldObj.rand.nextFloat() * item.width * 2.0F - item.width - d2 * d3, 0, d0, d1, d2, m);
+			//item.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, );
 		}
 	}
 

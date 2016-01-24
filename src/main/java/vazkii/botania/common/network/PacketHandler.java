@@ -16,6 +16,7 @@ public final class PacketHandler {
         NET = new SimpleNetworkWrapper(LibMisc.MOD_ID);
         NET.registerMessage(PacketSparkleFX.Handler.class, PacketSparkleFX.class, 0, Side.CLIENT);
         NET.registerMessage(PacketWispFX.Handler.class, PacketWispFX.class, 1, Side.CLIENT);
+        NET.registerMessage(PacketLightningFX.Handler.class, PacketLightningFX.class, 2, Side.CLIENT);
     }
 
     public static void sendToAllNear(IMessage msg, TileEntity te, int radius) {

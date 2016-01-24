@@ -23,6 +23,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import vazkii.botania.api.BotaniaAPI;
+import vazkii.botania.api.internal.VanillaPacketDispatcher;
 import vazkii.botania.api.lexicon.ILexiconable;
 import vazkii.botania.api.lexicon.LexiconEntry;
 import vazkii.botania.api.wand.IWandable;
@@ -61,6 +62,8 @@ public class BlockRuneAltar extends BlockModContainer implements IWandable, ILex
 
 	@Override
 	public boolean onBlockActivated(World par1World, BlockPos pos, IBlockState state, EntityPlayer par5EntityPlayer, EnumFacing side, float par7, float par8, float par9) {
+		if (par1World.isRemote)
+			return false;
 		TileRuneAltar altar = (TileRuneAltar) par1World.getTileEntity(pos);
 		ItemStack stack = par5EntityPlayer.getCurrentEquippedItem();
 
@@ -72,8 +75,10 @@ public class BlockRuneAltar extends BlockModContainer implements IWandable, ILex
 						ItemStack copy = stackAt.copy();
 						if(!par5EntityPlayer.inventory.addItemStackToInventory(copy))
 							par5EntityPlayer.dropPlayerItemWithRandomChoice(copy, false);
+						par5EntityPlayer.openContainer.detectAndSendChanges();
 						altar.setInventorySlotContents(i, null);
 						par1World.updateComparatorOutputLevel(pos, this);
+						VanillaPacketDispatcher.dispatchTEToNearbyPlayers(altar);
 						break;
 					}
 				}
@@ -140,7 +145,8 @@ public class BlockRuneAltar extends BlockModContainer implements IWandable, ILex
 
 	@Override
 	public boolean onUsedByWand(EntityPlayer player, ItemStack stack, World world, BlockPos pos, EnumFacing side) {
-		((TileRuneAltar) world.getTileEntity(pos)).onWanded(player, stack);
+		if (!world.isRemote)
+			((TileRuneAltar) world.getTileEntity(pos)).onWanded(player, stack);
 		return true;
 	}
 

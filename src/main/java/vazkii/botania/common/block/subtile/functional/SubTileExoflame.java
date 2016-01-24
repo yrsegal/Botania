@@ -33,6 +33,9 @@ public class SubTileExoflame extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (supertile.getWorld().isRemote)
+			return;
+
 		boolean did = false;
 		int cost = 300;
 

@@ -28,6 +28,9 @@ public class SubTileArcaneRose extends SubTileGenerating {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (supertile.getWorld().isRemote)
+			return;
+
 		if(mana >= getMaxMana())
 			return;
 

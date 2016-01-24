@@ -46,6 +46,9 @@ public class SubTileMunchdew extends SubTileGenerating {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (supertile.getWorld().isRemote)
+			return;
+
 		if(cooldown > 0) {
 			cooldown--;
 			ticksWithoutEating = 0;
@@ -54,7 +57,7 @@ public class SubTileMunchdew extends SubTileGenerating {
 
 		int manaPerLeaf = 160;
 		eatLeaves : {
-			if(getMaxMana() - mana >= manaPerLeaf && !supertile.getWorld().isRemote && ticksExisted % 4 == 0) {
+			if(getMaxMana() - mana >= manaPerLeaf && ticksExisted % 4 == 0) {
 				List<BlockPos> coords = new ArrayList();
 				BlockPos pos = supertile.getPos();
 

@@ -112,9 +112,9 @@ public class BlockForestDrum extends BlockMod implements IManaTrigger, ILexicona
 		if(burst.isFake())
 			return;
 		DrumVariant variant = world.getBlockState(pos).getValue(BotaniaStateProps.DRUM_VARIANT);
-		if(variant == DrumVariant.WILD)
+		if(!world.isRemote && variant == DrumVariant.WILD)
 			ItemGrassHorn.breakGrass(world, null, 0, pos);
-		else if(variant == DrumVariant.CANOPY)
+		else if(!world.isRemote && variant == DrumVariant.CANOPY)
 			ItemGrassHorn.breakGrass(world, null, 1, pos);
 		else if(!world.isRemote) {
 			int range = 10;

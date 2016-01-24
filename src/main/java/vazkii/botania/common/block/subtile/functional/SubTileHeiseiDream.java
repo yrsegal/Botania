@@ -37,6 +37,9 @@ public class SubTileHeiseiDream extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (supertile.getWorld().isRemote)
+			return;
+
 		final int cost = 100;
 
 		List mobs = supertile.getWorld().getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(supertile.getPos().add(-RANGE, -RANGE, -RANGE), supertile.getPos().add(RANGE + 1, RANGE + 1, RANGE + 1)), Predicates.instanceOf(IMob.class));

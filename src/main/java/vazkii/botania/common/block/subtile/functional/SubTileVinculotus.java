@@ -36,7 +36,7 @@ public class SubTileVinculotus extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if(!existingFlowers.contains(this)) {
+		if(!supertile.getWorld().isRemote && !existingFlowers.contains(this)) {
 			existingFlowers.add(this);
 			if(!registered) {
 				MinecraftForge.EVENT_BUS.register(new EndermanIntercepter());

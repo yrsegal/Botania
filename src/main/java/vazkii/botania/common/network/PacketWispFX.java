@@ -35,6 +35,10 @@ public class PacketWispFX implements IMessage {
         attributes.clear(3);
     }
 
+    public PacketWispFX(double x, double y, double z, float r, float g, float b, float size, float gravity) {
+        this(x, y, z, r, g, b, size, 0, -gravity, 0);
+    }
+
     public PacketWispFX(double x, double y, double z, float r, float g, float b, float size, float mX, float mY, float mZ) {
         this.x = x; this.y = y; this.z = z;
         this.r = r; this.g = g; this.b = b;

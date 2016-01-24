@@ -27,6 +27,9 @@ public class SubTileKekimurus extends SubTileGenerating {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (supertile.getWorld().isRemote)
+			return;
+
 		int mana = 1800;
 
 		if(getMaxMana() - this.mana >= mana && !supertile.getWorld().isRemote && ticksExisted % 80 == 0) {

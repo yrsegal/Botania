@@ -29,7 +29,7 @@ public class SubTileLoonuim extends SubTileFunctional {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if(redstoneSignal == 0 && ticksExisted % 200 == 0 && mana >= COST) {
+		if(!supertile.getWorld().isRemote && redstoneSignal == 0 && ticksExisted % 200 == 0 && mana >= COST) {
 			Random rand = supertile.getWorld().rand;
 
 			ItemStack stack;
@@ -43,8 +43,7 @@ public class SubTileLoonuim extends SubTileFunctional {
 			entity.motionY = 0;
 			entity.motionZ = 0;
 
-			if(!supertile.getWorld().isRemote)
-				supertile.getWorld().spawnEntityInWorld(entity);
+			supertile.getWorld().spawnEntityInWorld(entity);
 
 			mana -= COST;
 			sync();
