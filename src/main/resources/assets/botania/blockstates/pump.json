@@ -1,12 +1,33 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "botania:dummy",
     "textures": {
       "particle": "botania:blocks/livingrock0"
-    }
+    },
+    "transform": "forge:default-block"
   },
   "variants": {
-    "normal": [{}]
+    "facing": {
+      "north": {},
+      "south": { "y": 180 },
+      "west": { "y": 270 },
+      "east": { "y": 90 }
+    },
+    "static": {
+      "true": {
+        "model": "botania:pump"
+      },
+      "false": {
+        "model": "botania:pump_head"
+      }
+    },
+    "inventory": [{
+      "model": "botania:pump",
+      "submodel": {
+        "head": {
+          "model": "botania:pump_head"
+        }
+      }
+    }]
   }
 }

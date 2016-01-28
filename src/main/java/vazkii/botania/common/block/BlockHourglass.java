@@ -35,7 +35,6 @@ import vazkii.botania.api.mana.IManaTrigger;
 import vazkii.botania.api.state.BotaniaStateProps;
 import vazkii.botania.api.wand.IWandHUD;
 import vazkii.botania.api.wand.IWandable;
-import vazkii.botania.client.lib.LibRenderIDs;
 import vazkii.botania.common.block.tile.TileHourglass;
 import vazkii.botania.common.block.tile.TileSimpleInventory;
 import vazkii.botania.common.item.ModItems;
@@ -124,7 +123,8 @@ public class BlockHourglass extends BlockModContainer implements IManaTrigger, I
 
 	@Override
 	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
-		world.setBlockState(pos, state.withProperty(BotaniaStateProps.POWERED, false), 1 | 2);
+		if(state.getValue(BotaniaStateProps.POWERED))
+			world.setBlockState(pos, state.withProperty(BotaniaStateProps.POWERED, false), 1 | 2);
 	}
 
 	@Override
@@ -177,7 +177,7 @@ public class BlockHourglass extends BlockModContainer implements IManaTrigger, I
 
 	@Override
 	public int getRenderType() {
-		return LibRenderIDs.idHourglass;
+		return 2;
 	}
 
 	@Override
