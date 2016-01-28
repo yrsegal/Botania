@@ -27,26 +27,26 @@
         - nightshade:
         - thermalily:
     - Functional flora:
-        - agricarnation: untested
-        - bellethorn/dreadthorn: untested
-        - bubbell: untested
+        - agricarnation: good to go
+        - bellethorn/dreadthorn: good to go
+        - bubbell: ??? idk how this is supposed to work
         - clayconia: already serversided
         - daffomill: n/a (must be present on both sides, may have trouble with clientside mana later)
-        - exoflame: untested
+        - exoflame: good to go
         - fallen kanade: already serversided
-        - heisei dream: untested
-        - hopperhock:
-        - hyacidus: untested
-        - loonium: untested
-        - marimorphosis: untested
-        - medumone: untested
-        - orechid[ignem]: untested
+        - heisei dream: not working originally, should work once fixed
+        - hopperhock: good to go
+        - hyacidus: good to go
+        - loonium: good to go
+        - marimorphosis: good to go
+        - medumone: good to go
+        - orechid[ignem]: good to go
         - pollidisiac: already serversided
-        - rannuncarpus: untested
+        - rannuncarpus: good to go
         - solegnolia: n/a (must be present on both sides)
         - spectranthemum: good to go
-        - tangleberrie/jiyuulia:
-        - tigerseye: untested
+        - tangleberrie/jiyuulia: good to go (perhaps optimize particles)
+        - tigerseye: good to go
         - vinculotus: good to go
     - Other flora:
         - Pure daisy: good to go (perhaps sync "active" state and use that for sparklefx)

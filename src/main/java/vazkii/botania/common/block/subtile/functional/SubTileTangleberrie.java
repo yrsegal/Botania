@@ -23,6 +23,8 @@ import vazkii.botania.common.Botania;
 import vazkii.botania.common.core.helper.MathHelper;
 import vazkii.botania.common.core.helper.Vector3;
 import vazkii.botania.common.lexicon.LexiconData;
+import vazkii.botania.common.network.PacketHandler;
+import vazkii.botania.common.network.PacketSparkleFX;
 
 public class SubTileTangleberrie extends SubTileFunctional {
 
@@ -30,7 +32,7 @@ public class SubTileTangleberrie extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if(mana > 0) {
+		if(!supertile.getWorld().isRemote && mana > 0) {
 			double x1 = supertile.getPos().getX() + 0.5;
 			double y1 = supertile.getPos().getY() + 0.5;
 			double z1 = supertile.getPos().getZ() + 0.5;
@@ -54,7 +56,8 @@ public class SubTileTangleberrie extends SubTileFunctional {
 				if(distance > maxDist && distance < range) {
 					MathHelper.setEntityMotionFromVector(entity, new Vector3(x1, y1, z1), getMotionVelocity());
 					if(supertile.getWorld().rand.nextInt(3) == 0)
-						Botania.proxy.sparkleFX(supertile.getWorld(), x2 + Math.random() * entity.width, y2 + Math.random() * entity.height, z2 + Math.random() * entity.width, 0.5F, 0.5F, 0.5F, 1F, 3);
+						PacketHandler.sendToAllNear(new PacketSparkleFX(x2 + Math.random() * entity.width, y2 + Math.random() * entity.height, z2 + Math.random() * entity.width, 0.5F, 0.5F, 0.5F, 1F, 3),
+								entity, 64);
 				}
 			}
 

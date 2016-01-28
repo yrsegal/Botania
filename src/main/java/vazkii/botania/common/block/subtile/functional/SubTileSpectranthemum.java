@@ -95,7 +95,6 @@ public class SubTileSpectranthemum extends SubTileFunctional {
 			double d2 = item.worldObj.rand.nextGaussian() * m;
 			double d3 = 10.0D;
 			((WorldServer) item.worldObj).spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, item.posX + item.worldObj.rand.nextFloat() * item.width * 2.0F - item.width - d0 * d3, item.posY + item.worldObj.rand.nextFloat() * item.height - d1 * d3, item.posZ + item.worldObj.rand.nextFloat() * item.width * 2.0F - item.width - d2 * d3, 0, d0, d1, d2, m);
-			//item.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, );
 		}
 	}
 

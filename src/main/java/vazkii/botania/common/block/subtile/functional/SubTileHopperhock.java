@@ -54,7 +54,7 @@ public class SubTileHopperhock extends SubTileFunctional {
 	private static final int RANGE_MANA_MINI = 2;
 	private static final int RANGE_MINI = 1;
 
-	private static Set<EntityItem> particled = Collections.newSetFromMap(new WeakHashMap());
+	private static Set<EntityItem> particled = Collections.newSetFromMap(new WeakHashMap<>());
 
 	int filterType = 0;
 
@@ -62,7 +62,7 @@ public class SubTileHopperhock extends SubTileFunctional {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if(redstoneSignal > 0)
+		if(supertile.getWorld().isRemote || redstoneSignal > 0)
 			return;
 
 		boolean pulledAny = false;
@@ -112,20 +112,16 @@ public class SubTileHopperhock extends SubTileFunctional {
 			}
 
 			if(invToPutItemIn != null && !item.isDead) {
-				boolean remote = supertile.getWorld().isRemote;
-				if(remote) {
-					if(!particled.contains(item)) {
-						SubTileSpectranthemum.spawnExplosionParticles(item, 3);
-						particled.add(item);
-					}
-				} else {
-					InventoryHelper.insertItemIntoInventory(invToPutItemIn, stack.splitStack(amountToPutIn), sideToPutItemIn, -1);
-					item.setEntityItemStack(stack); // Just in case someone subclasses EntityItem and changes something important.
-					invToPutItemIn.markDirty();
-					if(item.getEntityItem().stackSize == 0)
-						item.setDead();
-					pulledAny = true;
+				if(!particled.contains(item)) {
+					SubTileSpectranthemum.spawnExplosionParticles(item, 3);
+					particled.add(item);
 				}
+				InventoryHelper.insertItemIntoInventory(invToPutItemIn, stack.splitStack(amountToPutIn), sideToPutItemIn, -1);
+				item.setEntityItemStack(stack); // Just in case someone subclasses EntityItem and changes something important.
+				invToPutItemIn.markDirty();
+				if(item.getEntityItem().stackSize == 0)
+					item.setDead();
+				pulledAny = true;
 			}
 		}
 
@@ -170,7 +166,7 @@ public class SubTileHopperhock extends SubTileFunctional {
 	}
 
 	public List<ItemStack> getFilterForInventory(IInventory inv, BlockPos pos, boolean recursiveForDoubleChests) {
-		List<ItemStack> filter = new ArrayList();
+		List<ItemStack> filter = new ArrayList<>();
 
 		if(recursiveForDoubleChests) {
 			TileEntity tileEntity = supertile.getWorld().getTileEntity(pos);
