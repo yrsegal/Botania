@@ -18,13 +18,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import vazkii.botania.api.lexicon.LexiconEntry;
 import vazkii.botania.api.subtile.RadiusDescriptor;
 import vazkii.botania.api.subtile.SubTileFunctional;
 import vazkii.botania.common.Botania;
+import vazkii.botania.common.core.handler.MethodHandles;
 import vazkii.botania.common.lexicon.LexiconData;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public class SubTileDaffomill extends SubTileFunctional {
 
@@ -52,12 +51,20 @@ public class SubTileDaffomill extends SubTileFunctional {
 			if(axis != null) {
 				List<EntityItem> items = supertile.getWorld().getEntitiesWithinAABB(EntityItem.class, axis);
 				int slowdown = getSlowdownFactor();
-				for(EntityItem item : items)
-					if(!item.isDead && ((Integer) ObfuscationReflectionHelper.getPrivateValue(EntityItem.class, item, LibObfuscation.AGE)) >= slowdown) {
+				for(EntityItem item : items) {
+					int age;
+					try {
+						age = (int) MethodHandles.itemAge_getter.invokeExact(item);
+					} catch (Throwable t) {
+						continue;
+					}
+
+					if(!item.isDead && age >= slowdown) {
 						item.motionX += orientation.getFrontOffsetX() * 0.05;
 						item.motionY += orientation.getFrontOffsetY() * 0.05;
 						item.motionZ += orientation.getFrontOffsetZ() * 0.05;
 					}
+				}
 			}
 
 			windTicks--;

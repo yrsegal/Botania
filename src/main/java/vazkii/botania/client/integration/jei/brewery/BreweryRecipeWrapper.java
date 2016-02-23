@@ -18,6 +18,7 @@ import vazkii.botania.api.recipe.RecipeBrew;
 import vazkii.botania.common.item.ModItems;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class BreweryRecipeWrapper implements IRecipeWrapper {
@@ -25,6 +26,7 @@ public class BreweryRecipeWrapper implements IRecipeWrapper {
 	private final List input;
 	private final List<ItemStack> output;
 
+	@SuppressWarnings("unchecked")
 	public BreweryRecipeWrapper(RecipeBrew recipeBrew) {
 		ImmutableList.Builder builder = ImmutableList.builder();
 		builder.add(ImmutableList.of(new ItemStack(ModItems.vial, 1, 0), new ItemStack(ModItems.vial, 1, 1)));
@@ -66,7 +68,21 @@ public class BreweryRecipeWrapper implements IRecipeWrapper {
 	}
 
 	@Override
+	public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+	}
+
+	@Override
 	public void drawAnimations(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight) {
+	}
+
+	@Override
+	public List<String> getTooltipStrings(int mouseX, int mouseY) {
+		return ImmutableList.of();
+	}
+
+	@Override
+	public boolean handleClick(@Nonnull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
+		return false;
 	}
 
 }

@@ -18,7 +18,6 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.text.WordUtils;
@@ -27,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import vazkii.botania.client.core.helper.IconHelper;
 import vazkii.botania.client.model.FloatingFlowerModel;
+import vazkii.botania.client.model.LexiconModel;
 import vazkii.botania.client.model.PlatformModel;
 import vazkii.botania.client.model.PylonItemModel;
 import vazkii.botania.common.block.ModBlocks;
@@ -107,6 +107,9 @@ public class MiscellaneousIcons {
 
         // Platforms
         evt.modelRegistry.putObject(new ModelResourceLocation("botania:platform", "normal"), new PlatformModel());
+
+        // Lexicon
+        evt.modelRegistry.putObject(new ModelResourceLocation("botania:lexicon", "inventory"), new LexiconModel());
     }
 
     @SubscribeEvent

@@ -21,14 +21,13 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.item.EntityItem;
 
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.opengl.GL11;
 
 import vazkii.botania.client.core.handler.ClientTickHandler;
 import vazkii.botania.client.core.handler.MiscellaneousIcons;
 import vazkii.botania.client.core.helper.ShaderHelper;
 import vazkii.botania.common.block.tile.TileEnchanter;
-import vazkii.botania.common.lib.LibObfuscation;
+import vazkii.botania.common.core.handler.MethodHandles;
 
 public class RenderTileEnchanter extends TileEntitySpecialRenderer<TileEnchanter> {
 
@@ -49,7 +48,10 @@ public class RenderTileEnchanter extends TileEntitySpecialRenderer<TileEnchanter
 			if(item == null)
 				item = new EntityItem(enchanter.getWorld(), enchanter.getPos().getX(), enchanter.getPos().getY() + 1, enchanter.getPos().getZ(), enchanter.itemToEnchant);
 
-			ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, item, ClientTickHandler.ticksInGame, LibObfuscation.AGE);
+			try {
+				MethodHandles.itemAge_setter.invokeExact(item, ClientTickHandler.ticksInGame);
+			} catch (Throwable ignored) {}
+
 			item.setEntityItemStack(enchanter.itemToEnchant);
 
 			GlStateManager.color(1F, 1F, 1F, 1F);

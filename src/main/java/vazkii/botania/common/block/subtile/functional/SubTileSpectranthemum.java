@@ -13,7 +13,6 @@ package vazkii.botania.common.block.subtile.functional;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,16 +20,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import vazkii.botania.api.lexicon.LexiconEntry;
 import vazkii.botania.api.mana.IManaItem;
 import vazkii.botania.api.subtile.RadiusDescriptor;
 import vazkii.botania.api.subtile.SubTileFunctional;
+import vazkii.botania.common.core.handler.MethodHandles;
 import vazkii.botania.common.core.helper.MathHelper;
 import vazkii.botania.common.lexicon.LexiconData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public class SubTileSpectranthemum extends SubTileFunctional {
 
@@ -60,7 +58,14 @@ public class SubTileSpectranthemum extends SubTileFunctional {
 			int slowdown = getSlowdownFactor();
 			
 			for(EntityItem item : items) {
-				if(((Integer) ObfuscationReflectionHelper.getPrivateValue(EntityItem.class, item, LibObfuscation.AGE)) < (60 + slowdown) || item.isDead || item.getEntityData().getBoolean(TAG_TELEPORTED))
+				int age;
+				try {
+					age = (int) MethodHandles.itemAge_getter.invokeExact(item);
+				} catch (Throwable t) {
+					continue;
+				}
+
+				if(age < (60 + slowdown) || item.isDead || item.getEntityData().getBoolean(TAG_TELEPORTED))
 					continue;
 
 				ItemStack stack = item.getEntityItem();

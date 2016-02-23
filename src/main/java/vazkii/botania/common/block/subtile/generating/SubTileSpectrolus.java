@@ -15,7 +15,6 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.item.EntityItem;
@@ -27,14 +26,13 @@ import net.minecraft.util.AxisAlignedBB;
 
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.opengl.GL11;
 
 import vazkii.botania.api.lexicon.LexiconEntry;
 import vazkii.botania.api.subtile.RadiusDescriptor;
 import vazkii.botania.api.subtile.SubTileGenerating;
+import vazkii.botania.common.core.handler.MethodHandles;
 import vazkii.botania.common.lexicon.LexiconData;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public class SubTileSpectrolus extends SubTileGenerating {
 
@@ -58,7 +56,15 @@ public class SubTileSpectrolus extends SubTileGenerating {
 
 		for(EntityItem item : items) {
 			ItemStack stack = item.getEntityItem();
-			if(stack != null && stack.getItem() == wool && !item.isDead && ((Integer) ObfuscationReflectionHelper.getPrivateValue(EntityItem.class, item, LibObfuscation.AGE)) >= slowdown) {
+
+			int age;
+			try {
+				age = (int) MethodHandles.itemAge_getter.invokeExact(item);
+			} catch (Throwable t) {
+				continue;
+			}
+
+			if(stack != null && stack.getItem() == wool && !item.isDead && age >= slowdown) {
 				int meta = stack.getItemDamage();
 				if(meta == nextColor) {
 					mana = Math.min(getMaxMana(), mana + 300);

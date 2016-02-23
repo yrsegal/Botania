@@ -14,7 +14,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +25,6 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.opengl.GL11;
 
 import vazkii.botania.api.lexicon.multiblock.IMultiblockRenderHook;
@@ -35,7 +33,6 @@ import vazkii.botania.api.lexicon.multiblock.MultiblockSet;
 import vazkii.botania.api.lexicon.multiblock.component.MultiblockComponent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import vazkii.botania.common.block.ModBlocks;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public final class MultiblockRenderHandler {
 
@@ -96,7 +93,7 @@ public final class MultiblockRenderHandler {
 	@SubscribeEvent
 	public void onWorldRenderLast(RenderWorldLastEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
-		if(mc.thePlayer != null && mc.objectMouseOver != null && (!mc.thePlayer.isSneaking() || anchor != null)) {
+		if(mc.thePlayer != null && mc.objectMouseOver != null && mc.objectMouseOver.getBlockPos() != null && (!mc.thePlayer.isSneaking() || anchor != null)) {
 			mc.thePlayer.getCurrentEquippedItem();
 			renderPlayerLook(mc.thePlayer, mc.objectMouseOver);
 		}
@@ -140,26 +137,24 @@ public final class MultiblockRenderHandler {
 		}
 	}
 
-	private double getRenderPosX() { // todo 1.8
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSX);
-	}
-
-	private double getRenderPosY() {
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSY);
-	}
-
-	private double getRenderPosZ() {
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSZ);
-	}
-
 	private boolean renderComponentInWorld(World world, Multiblock mb, MultiblockComponent comp, BlockPos anchorPos) {
+		double renderPosX, renderPosY, renderPosZ;
+
+		try {
+			renderPosX = (double) ClientMethodHandles.renderPosX_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosY = (double) ClientMethodHandles.renderPosY_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosZ = (double) ClientMethodHandles.renderPosZ_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+		} catch (Throwable t) {
+			return true;
+		}
+
 		BlockPos pos = comp.getRelativePosition();
 		BlockPos pos_ = pos.add(anchorPos);
 		if(anchor != null && comp.matches(world, pos_))
 			return false;
 
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(-getRenderPosX(), -getRenderPosY(), -getRenderPosZ());
+		GlStateManager.translate(-renderPosX, -renderPosY, -renderPosZ);
 		GlStateManager.disableDepth();
 		doRenderComponent(mb, comp, pos_, 0.4F);
 		GlStateManager.popMatrix();

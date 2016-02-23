@@ -32,7 +32,6 @@ import vazkii.botania.common.item.ModItems;
 import vazkii.botania.common.item.equipment.armor.terrasteel.ItemTerrasteelHelm;
 import baubles.common.container.InventoryBaubles;
 import baubles.common.lib.PlayerHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public final class BaubleRenderHandler implements LayerRenderer<EntityPlayer> {
 
@@ -100,6 +99,7 @@ public final class BaubleRenderHandler implements LayerRenderer<EntityPlayer> {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void renderManaTablet(EntityPlayer player) {
 		boolean renderedOne = false;
 		for(int i = 0; i < player.inventory.getSizeInventory(); i++) {

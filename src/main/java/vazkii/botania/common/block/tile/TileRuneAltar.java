@@ -21,7 +21,6 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.StatCollector;
@@ -74,7 +73,7 @@ public class TileRuneAltar extends TileSimpleInventory implements ISidedInventor
 			}
 
 			EntityItem item = new EntityItem(worldObj, getPos().getX() + 0.5, getPos().getY() + 1, getPos().getZ() + 0.5, new ItemStack(ModBlocks.livingrock));
-			ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, item, 40, LibObfuscation.PICKUP_DELAY);
+			item.setPickupDelay(40);
 			item.motionX = item.motionY = item.motionZ = 0;
 			worldObj.spawnEntityInWorld(item);
 
@@ -183,7 +182,7 @@ public class TileRuneAltar extends TileSimpleInventory implements ISidedInventor
 	}
 
 	public void saveLastRecipe() {
-		lastRecipe = new ArrayList();
+		lastRecipe = new ArrayList<>();
 		for(int i = 0; i < getSizeInventory(); i++) {
 			ItemStack stack = getStackInSlot(i);
 			if(stack == null)

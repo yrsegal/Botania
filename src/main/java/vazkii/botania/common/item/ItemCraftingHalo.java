@@ -17,7 +17,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -37,9 +36,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.opengl.GL11;
 
+import vazkii.botania.client.core.handler.ClientMethodHandles;
 import vazkii.botania.client.core.handler.ClientTickHandler;
 import vazkii.botania.client.gui.crafting.InventoryCraftingHalo;
 import vazkii.botania.client.lib.LibResources;
@@ -57,7 +56,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public class ItemCraftingHalo extends ItemMod implements ICraftAchievement {
 
@@ -391,23 +389,21 @@ public class ItemCraftingHalo extends ItemMod implements ICraftAchievement {
 			render(stack, player, event.partialTicks);
 	}
 
-	private double getRenderPosX() { // todo 1.8
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSX);
-	}
-
-	private double getRenderPosY() {
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSY);
-	}
-
-	private double getRenderPosZ() {
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSZ);
-	}
-
 	@SideOnly(Side.CLIENT)
 	public void render(ItemStack stack, EntityPlayer player, float partialTicks) {
 		Minecraft mc = Minecraft.getMinecraft();
 		Tessellator tess = Tessellator.getInstance();
 		// todo 1.8.8 Tessellator.renderingWorldRenderer = false;
+
+		double renderPosX, renderPosY, renderPosZ;
+
+		try {
+			renderPosX = (double) ClientMethodHandles.renderPosX_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosY = (double) ClientMethodHandles.renderPosY_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosZ = (double) ClientMethodHandles.renderPosZ_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+		} catch (Throwable t) {
+			return;
+		}
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
@@ -418,7 +414,7 @@ public class ItemCraftingHalo extends ItemMod implements ICraftAchievement {
 		double posY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
 		double posZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
 
-		GlStateManager.translate(posX - getRenderPosX(), posY - getRenderPosY() + player.getDefaultEyeHeight(), posZ - getRenderPosZ());
+		GlStateManager.translate(posX - renderPosX, posY - renderPosY + player.getDefaultEyeHeight(), posZ - renderPosZ);
 
 
 		float base = getRotationBase(stack);

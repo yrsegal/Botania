@@ -15,7 +15,6 @@ import java.awt.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -24,7 +23,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.opengl.GL11;
 
 import vazkii.botania.api.subtile.ISubTileContainer;
@@ -34,7 +32,6 @@ import vazkii.botania.common.Botania;
 import vazkii.botania.common.item.ItemTwigWand;
 import vazkii.botania.common.item.ModItems;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public final class SubTileRadiusRenderHandler {
 
@@ -84,21 +81,19 @@ public final class SubTileRadiusRenderHandler {
 		GlStateManager.popMatrix();
 	}
 
-	private double getRenderPosX() { // todo 1.8
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSX);
-	}
-
-	private double getRenderPosY() {
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSY);
-	}
-
-	private double getRenderPosZ() {
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSZ);
-	}
-
 	public void renderRectangle(AxisAlignedBB aabb) {
+		double renderPosX, renderPosY, renderPosZ;
+
+		try {
+			renderPosX = (double) ClientMethodHandles.renderPosX_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosY = (double) ClientMethodHandles.renderPosY_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosZ = (double) ClientMethodHandles.renderPosZ_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+		} catch (Throwable t) {
+			return;
+		}
+
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(aabb.minX - getRenderPosX(), aabb.minY - getRenderPosY(), aabb.minZ - getRenderPosZ());
+		GlStateManager.translate(aabb.minX - renderPosX, aabb.minY - renderPosY, aabb.minZ - renderPosZ);
 		int color = Color.HSBtoRGB(ClientTickHandler.ticksInGame % 200 / 200F, 0.6F, 1F);
 
 		Color colorRGB = new Color(color);
@@ -127,15 +122,26 @@ public final class SubTileRadiusRenderHandler {
 		tessellator.getWorldRenderer().pos(x, f1, z).endVertex();
 		tessellator.draw();
 
+		GL11.glColor4ub(((byte) 255), ((byte) 255), ((byte) 255), ((byte) 255));
 		GlStateManager.popMatrix();
 	}
 
 	public void renderCircle(BlockPos center, double radius) {
+		double renderPosX, renderPosY, renderPosZ;
+
+		try {
+			renderPosX = (double) ClientMethodHandles.renderPosX_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosY = (double) ClientMethodHandles.renderPosY_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosZ = (double) ClientMethodHandles.renderPosZ_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+		} catch (Throwable t) {
+			return;
+		}
+
 		GlStateManager.pushMatrix();
 		double x = center.getX() + 0.5;
 		double y = center.getY();
 		double z = center.getZ() + 0.5;
-		GlStateManager.translate(x - getRenderPosX(), y - getRenderPosY(), z - getRenderPosZ());
+		GlStateManager.translate(x - renderPosX, y - renderPosY, z - renderPosZ);
 		int color = Color.HSBtoRGB(ClientTickHandler.ticksInGame % 200 / 200F, 0.6F, 1F);
 
 		Color colorRGB = new Color(color);
@@ -173,6 +179,7 @@ public final class SubTileRadiusRenderHandler {
 		}
 		tessellator.getWorldRenderer().pos(0, f1, 0).endVertex();
 		tessellator.draw();
+		GL11.glColor4ub(((byte) 255), ((byte) 255), ((byte) 255), ((byte) 255));
 		GlStateManager.popMatrix();
 	}
 

@@ -20,6 +20,7 @@ import vazkii.botania.client.core.handler.HUDHandler;
 import vazkii.botania.common.block.tile.mana.TilePool;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class RunicAltarRecipeWrapper implements IRecipeWrapper {
@@ -28,6 +29,7 @@ public class RunicAltarRecipeWrapper implements IRecipeWrapper {
 	private final ItemStack output;
 	private final int manaUsage;
 
+	@SuppressWarnings("unchecked")
 	public RunicAltarRecipeWrapper(RecipeRuneAltar recipe) {
 		ImmutableList.Builder builder = ImmutableList.builder();
 		for(Object o : recipe.getInputs()) {
@@ -65,6 +67,10 @@ public class RunicAltarRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight) {
+	}
+
+	@Override
+	public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
 		GlStateManager.enableAlpha();
 		HUDHandler.renderManaBar(28, 113, 0x0000FF, 0.75F, manaUsage, TilePool.MAX_MANA / 10);
 		GlStateManager.disableAlpha();
@@ -72,6 +78,16 @@ public class RunicAltarRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void drawAnimations(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight) {
+	}
+
+	@Override
+	public List<String> getTooltipStrings(int mouseX, int mouseY) {
+		return ImmutableList.of();
+	}
+
+	@Override
+	public boolean handleClick(@Nonnull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
+		return false;
 	}
 
 }

@@ -32,7 +32,7 @@ public class ItemThornChakram extends ItemMod implements ICraftAchievement {
 	}
 
 	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
 		for(int i = 0; i < 2; i++)
 			list.add(new ItemStack(item, 1, i));
 	}
@@ -49,7 +49,9 @@ public class ItemThornChakram extends ItemMod implements ICraftAchievement {
 		p_77659_2_.playSoundAtEntity(p_77659_3_, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 
 		if(!p_77659_2_.isRemote) {
-			EntityThornChakram c = new EntityThornChakram(p_77659_2_, p_77659_3_);
+			ItemStack stack = p_77659_1_.copy();
+			stack.stackSize = 1;
+			EntityThornChakram c = new EntityThornChakram(p_77659_2_, p_77659_3_, stack);
 			c.setFire(p_77659_1_.getItemDamage() != 0);
 			p_77659_2_.spawnEntityInWorld(c);
 		}

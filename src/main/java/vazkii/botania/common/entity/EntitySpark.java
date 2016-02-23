@@ -48,7 +48,7 @@ public class EntitySpark extends Entity implements ISparkEntity {
 	private static final String TAG_INVIS = "invis";
 	public static final int INVISIBILITY_DATA_WATCHER_KEY = 27;
 
-	Set<ISparkEntity> transfers = Collections.newSetFromMap(new WeakHashMap());
+	Set<ISparkEntity> transfers = Collections.newSetFromMap(new WeakHashMap<>());
 
 	int removeTransferants = 2;
 	boolean firstTick = false;
@@ -94,11 +94,11 @@ public class EntitySpark extends Entity implements ISparkEntity {
 			case 1 : { // Dispersive
 				List<EntityPlayer> players = SparkHelper.getEntitiesAround(EntityPlayer.class, worldObj, posX, posY, posZ);
 
-				Map<EntityPlayer, Map<ItemStack, Integer>> receivingPlayers = new HashMap();
+				Map<EntityPlayer, Map<ItemStack, Integer>> receivingPlayers = new HashMap<>();
 
 				ItemStack input = new ItemStack(ModItems.spark);
 				for(EntityPlayer player : players) {
-					List<ItemStack> stacks = new ArrayList();
+					List<ItemStack> stacks = new ArrayList<>();
 					stacks.addAll(Arrays.asList(player.inventory.mainInventory));
 					stacks.addAll(Arrays.asList(player.inventory.armorInventory));
 					stacks.addAll(Arrays.asList(PlayerHandler.getPlayerBaubles(player).stackList));
@@ -109,11 +109,11 @@ public class EntitySpark extends Entity implements ISparkEntity {
 
 						IManaItem manaItem = (IManaItem) stack.getItem();
 						if(manaItem.canReceiveManaFromItem(stack, input)) {
-							Map receivingStacks;
+							Map<ItemStack, Integer> receivingStacks;
 							boolean add = false;
 							if(!receivingPlayers.containsKey(player)) {
 								add = true;
-								receivingStacks = new HashMap();
+								receivingStacks = new HashMap<>();
 							} else receivingStacks = receivingPlayers.get(player);
 
 							int recv = Math.min(getAttachedTile().getCurrentMana(), Math.min(TRANSFER_RATE, manaItem.getMaxMana(stack) - manaItem.getMana(stack)));
@@ -127,7 +127,7 @@ public class EntitySpark extends Entity implements ISparkEntity {
 				}
 
 				if(!receivingPlayers.isEmpty()) {
-					List<EntityPlayer> keys = new ArrayList(receivingPlayers.keySet());
+					List<EntityPlayer> keys = new ArrayList<>(receivingPlayers.keySet());
 					Collections.shuffle(keys);
 					EntityPlayer player = keys.iterator().next();
 
@@ -143,7 +143,7 @@ public class EntitySpark extends Entity implements ISparkEntity {
 				break;
 			}
 			case 2 : { // Dominant
-				List<ISparkEntity> validSparks = new ArrayList();
+				List<ISparkEntity> validSparks = new ArrayList<>();
 				for(ISparkEntity spark : allSparks) {
 					if(spark == this)
 						continue;
@@ -333,7 +333,7 @@ public class EntitySpark extends Entity implements ISparkEntity {
 
 	@Override
 	public Collection<ISparkEntity> getTransfers() {
-		Collection<ISparkEntity> removals = new ArrayList();
+		Collection<ISparkEntity> removals = new ArrayList<>();
 
 		for(ISparkEntity e : transfers) {
 			ISparkEntity spark = e;

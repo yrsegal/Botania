@@ -52,6 +52,11 @@ public class ItemGravityRod extends ItemMod implements IManaUsingItem {
 	}
 
 	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return newStack.getItem() != this;
+	}
+
+	@Override
 	public void onUpdate(ItemStack stack, World world, Entity par3Entity, int p_77663_4_, boolean p_77663_5_) {
 		if(!(par3Entity instanceof EntityPlayer))
 			return;
@@ -133,7 +138,7 @@ public class ItemGravityRod extends ItemMod implements IManaUsingItem {
 				
 				if(ManaItemHandler.requestManaExactForTool(stack, player, COST, true)) {
 					if(item instanceof EntityItem)
-						ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, ((EntityItem) item), 5, LibObfuscation.PICKUP_DELAY);
+						((EntityItem) item).setPickupDelay(5);
 
 					if(item instanceof EntityLivingBase) {
 						EntityLivingBase targetEntity = (EntityLivingBase)item;
@@ -219,7 +224,7 @@ public class ItemGravityRod extends ItemMod implements IManaUsingItem {
 					ItemNBTHelper.setDouble(stack, TAG_DIST, -1);
 					Vector3 moveVector = new Vector3(player.getLookVec().normalize());
 					if(item instanceof EntityItem) {
-						ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, ((EntityItem) item), 20, LibObfuscation.PICKUP_DELAY);
+						((EntityItem) item).setPickupDelay(20);
 						float mot = IManaProficiencyArmor.Helper.hasProficiency(player) ? 2.25F : 1.5F;
 						item.motionX = moveVector.x * mot;
 						item.motionY = moveVector.y;

@@ -16,12 +16,10 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import vazkii.botania.common.core.handler.MethodHandles;
 import vazkii.botania.common.lib.LibBlockNames;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public class TileOpenCrate extends TileSimpleInventory {
 
@@ -72,8 +70,12 @@ public class TileOpenCrate extends TileSimpleInventory {
 		item.motionY = 0;
 		item.motionZ = 0;
 
-		if(redstone)
-			ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, item, -200, LibObfuscation.AGE);
+		if(redstone) {
+			try {
+				MethodHandles.itemAge_setter.invokeExact(item, -200);
+			} catch (Throwable ignored) {}
+		}
+
 
 		setInventorySlotContents(0, null);
 		worldObj.spawnEntityInWorld(item);

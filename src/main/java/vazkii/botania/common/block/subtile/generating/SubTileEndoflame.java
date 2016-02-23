@@ -19,13 +19,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import vazkii.botania.api.lexicon.LexiconEntry;
 import vazkii.botania.api.subtile.RadiusDescriptor;
 import vazkii.botania.api.subtile.SubTileGenerating;
 import vazkii.botania.common.block.ModBlocks;
+import vazkii.botania.common.core.handler.MethodHandles;
 import vazkii.botania.common.lexicon.LexiconData;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public class SubTileEndoflame extends SubTileGenerating {
 
@@ -46,9 +45,16 @@ public class SubTileEndoflame extends SubTileGenerating {
 
 					int slowdown = getSlowdownFactor();
 
-							List<EntityItem> items = supertile.getWorld().getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(supertile.getPos().add(-RANGE, -RANGE, -RANGE), supertile.getPos().add(RANGE + 1, RANGE + 1, RANGE + 1)));
+					List<EntityItem> items = supertile.getWorld().getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(supertile.getPos().add(-RANGE, -RANGE, -RANGE), supertile.getPos().add(RANGE + 1, RANGE + 1, RANGE + 1)));
 					for(EntityItem item : items) {
-						if(((Integer) ObfuscationReflectionHelper.getPrivateValue(EntityItem.class, item, LibObfuscation.AGE)) >= (59 + slowdown) && !item.isDead) {
+						int age;
+						try {
+							age = (int) MethodHandles.itemAge_getter.invokeExact(item);
+						} catch (Throwable t) {
+							continue;
+						}
+
+						if(age >= (59 + slowdown) && !item.isDead) {
 							ItemStack stack = item.getEntityItem();
 							if(stack.getItem().hasContainerItem(stack))
 								continue;

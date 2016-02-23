@@ -39,7 +39,7 @@ public class PageEntity extends LexiconPage{
 		Class EntityClass = (Class) EntityList.stringToClassMapping.get(entity);
 		this.size = size;
 		try {
-			entityConstructor = EntityClass.getConstructor(new Class[] {World.class});
+			entityConstructor = EntityClass.getConstructor(World.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,7 +104,7 @@ public class PageEntity extends LexiconPage{
 	public void prepDummy() {
 		if(dummyEntity == null || dummyEntity.isDead) {
 			try {
-				dummyEntity = (Entity) entityConstructor.newInstance(new Object[] {Minecraft.getMinecraft().theWorld});
+				dummyEntity = (Entity) entityConstructor.newInstance(Minecraft.getMinecraft().theWorld);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

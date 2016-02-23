@@ -13,7 +13,6 @@ package vazkii.botania.client.core.handler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -48,7 +47,7 @@ public final class DebugHandler {
 			event.left.add(PREFIX + "pS: " + ParticleRenderDispatcher.sparkleFxCount + ", pFS: " + ParticleRenderDispatcher.fakeSparkleFxCount + ", pW: " + ParticleRenderDispatcher.wispFxCount + ", pDIW: " + ParticleRenderDispatcher.depthIgnoringWispFxCount + ", pLB: " + ParticleRenderDispatcher.lightningCount);
 			event.left.add(PREFIX + "(CLIENT) netColl: " + ManaNetworkHandler.instance.getAllCollectorsInWorld(world).size() + ", netPool: " + ManaNetworkHandler.instance.getAllPoolsInWorld(world).size() + ", rv: " + version);
 
-			if (Minecraft.getMinecraft().isIntegratedServerRunning()) {
+			if (Minecraft.getMinecraft().isSingleplayer()) {
 				UUID id = Minecraft.getMinecraft().thePlayer.getUniqueID();
 				Entity ent = Minecraft.getMinecraft().getIntegratedServer().getEntityFromUuid(id);
 				if (ent != null) {

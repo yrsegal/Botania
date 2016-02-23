@@ -84,7 +84,8 @@ public class BlockFloatingSpecialFlower extends BlockFloatingFlower implements I
 
 	@Override
 	public int getLightValue(IBlockAccess world, BlockPos pos) {
-		int currentLight = ((TileSpecialFlower) world.getTileEntity(pos)).getLightValue();
+		TileEntity tile = world.getTileEntity(pos);
+		int currentLight = tile instanceof TileSpecialFlower ? ((TileSpecialFlower) tile).getLightValue() : -1;
 		if(currentLight == -1)
 			currentLight = originalLight;
 		return LightHelper.getPackedColor(world.getBlockState(pos).getValue(BotaniaStateProps.COLOR), currentLight);
@@ -121,7 +122,7 @@ public class BlockFloatingSpecialFlower extends BlockFloatingFlower implements I
 	}
 
 	@Override
-	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
+	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List) {
 		for(String s : BotaniaAPI.subtilesForCreativeMenu) {
 			par3List.add(ItemBlockSpecialFlower.ofType(new ItemStack(par1), s));
 			if(BotaniaAPI.miniFlowers.containsKey(s))
@@ -146,7 +147,7 @@ public class BlockFloatingSpecialFlower extends BlockFloatingFlower implements I
 
 	@Override
 	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-		ArrayList<ItemStack> list = new ArrayList();
+		ArrayList<ItemStack> list = new ArrayList<>();
 		TileEntity tile = world.getTileEntity(pos);
 
 		if(tile != null) {

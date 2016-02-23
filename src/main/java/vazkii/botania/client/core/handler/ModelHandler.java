@@ -8,7 +8,9 @@
  */
 package vazkii.botania.client.core.handler;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.block.BlockFlower;
@@ -18,7 +20,6 @@ import net.minecraft.block.BlockWall;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -110,7 +111,7 @@ import vazkii.botania.common.block.tile.TileTeruTeruBozu;
 import vazkii.botania.common.block.tile.corporea.TileCorporeaCrystalCube;
 import vazkii.botania.common.block.tile.corporea.TileCorporeaIndex;
 import vazkii.botania.common.block.tile.mana.TileBellows;
-import vazkii.botania.common.block.tile.mana.TilePump;
+import vazkii.botania.common.core.handler.ConfigHandler;
 import vazkii.botania.common.item.ItemManaGun;
 import vazkii.botania.common.item.ItemSpawnerMover;
 import vazkii.botania.common.item.ItemTwigWand;
@@ -369,6 +370,7 @@ public final class ModelHandler {
         BotaniaAPIClient.registerSubtileModel(SubTileHyacidus.class, new ModelResourceLocation("botania:" + LibBlockNames.SUBTILE_HYACIDUS));
         BotaniaAPIClient.registerSubtileModel(SubTilePollidisiac.class, new ModelResourceLocation("botania:" + LibBlockNames.SUBTILE_POLLIDISIAC));
         BotaniaAPIClient.registerSubtileModel(SubTileClayconia.class, new ModelResourceLocation("botania:" + LibBlockNames.SUBTILE_CLAYCONIA));
+        BotaniaAPIClient.registerSubtileModel(SubTileClayconia.Mini.class, new ModelResourceLocation("botania:" + LibBlockNames.SUBTILE_CLAYCONIA + "Chibi"));
         BotaniaAPIClient.registerSubtileModel(SubTileLoonuim.class, new ModelResourceLocation("botania:" + LibBlockNames.SUBTILE_LOONIUM));
         BotaniaAPIClient.registerSubtileModel(SubTileDaffomill.class, new ModelResourceLocation("botania:" + LibBlockNames.SUBTILE_DAFFOMILL));
         BotaniaAPIClient.registerSubtileModel(SubTileVinculotus.class, new ModelResourceLocation("botania:" + LibBlockNames.SUBTILE_VINCULOTUS));
@@ -469,6 +471,10 @@ public final class ModelHandler {
         registerItemModel(pestleAndMortar);
         registerItemModel(blackLotus);
         registerItemModel(blackLotus, 1);
+
+        ModelLoader.registerItemVariants(lexicon,
+                new ModelResourceLocation("botania:lexicon_default", "inventory"),
+                new ModelResourceLocation("botania:lexicon_firstperson", "inventory"));
         registerItemModel(lexicon);
 
         registerItemModel(manasteelHelm);
@@ -515,7 +521,6 @@ public final class ModelHandler {
         registerItemModel(fireRod);
         registerItemModel(rainbowRod);
         registerItemModel(skyDirtRod);
-        registerItemModel(tornadoRod);
         registerItemModel(terraformRod);
         registerItemModel(diviningRod);
         registerItemModel(gravityRod);
@@ -640,7 +645,6 @@ public final class ModelHandler {
         Item item = manaResource;
         for (int i = 0; i < LibItemNames.MANA_RESOURCE_NAMES.length; i++) {
             String name = "botania:" + LibItemNames.MANA_RESOURCE_NAMES[i];
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "inventory"));
             ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(name, "inventory"));
         }
     }
@@ -648,7 +652,6 @@ public final class ModelHandler {
     private static void registerRunes() {
         List<String> variantNames = ImmutableList.of("water", "fire", "earth", "air", "spring", "summer", "autumn", "winter", "mana", "lust", "gluttony", "greed", "sloth", "wrath", "envy", "pride");
         for (int i = 0; i < variantNames.size(); i++) {
-            ModelLoader.registerItemVariants(rune, new ModelResourceLocation("botania:rune_" + variantNames.get(i), "inventory"));
             ModelLoader.setCustomModelResourceLocation(rune, i, new ModelResourceLocation("botania:rune_" + variantNames.get(i), "inventory"));
         }
     }
@@ -672,13 +675,11 @@ public final class ModelHandler {
     private static void registerLens() {
         int counter = 0;
         for (String s : LibItemNames.LENS_NAMES) {
-            ModelLoader.registerItemVariants(lens, new ModelResourceLocation("botania:" + s, "inventory"));
             ModelLoader.setCustomModelResourceLocation(lens, counter++, new ModelResourceLocation("botania:" + s, "inventory"));
         }
     }
 
     private static void registerBrews() {
-        ModelLoader.registerItemVariants(vial, new ModelResourceLocation("botania:vial", "inventory"), new ModelResourceLocation("botania:flask", "inventory"));
         ModelLoader.setCustomModelResourceLocation(vial, 0, new ModelResourceLocation("botania:vial", "inventory"));
         ModelLoader.setCustomModelResourceLocation(vial, 1, new ModelResourceLocation("botania:flask", "inventory"));
 
@@ -702,33 +703,16 @@ public final class ModelHandler {
     }
 
     private static void registerStateMappers() {
-        // Override to let smartmodels work, see RenderEventHandler
-        ModelLoader.setCustomStateMapper(ModBlocks.floatingSpecialFlower, new StateMapperBase() {
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                return new ModelResourceLocation("botania:floatingSpecialFlower", "normal");
-            }
-        });
-
-        ModelLoader.setCustomStateMapper(ModBlocks.floatingFlower, new StateMapperBase() {
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                return new ModelResourceLocation("botania:miniIsland", "normal");
-            }
-        });
-
-        ModelLoader.setCustomStateMapper(ModBlocks.platform, new StateMapperBase() {
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                return new ModelResourceLocation("botania:platform", "normal");
-            }
-        });
+        // Override to let smart models work, see MiscellaneousIcons
+        ModelLoader.setCustomStateMapper(ModBlocks.floatingSpecialFlower, new StateMap.Builder().ignore(BotaniaStateProps.COLOR).build());
+        ModelLoader.setCustomStateMapper(ModBlocks.floatingFlower, new StateMap.Builder().ignore(BotaniaStateProps.COLOR).build());
+        ModelLoader.setCustomStateMapper(ModBlocks.platform, new StateMap.Builder().ignore(BotaniaStateProps.PLATFORM_VARIANT).build());
 
         // Ignore vanilla facing, variant in double flower
         ModelLoader.setCustomStateMapper(ModBlocks.doubleFlower1, (new StateMap.Builder()).ignore(BlockDoublePlant.VARIANT, BlockDoublePlant.field_181084_N).build());
         ModelLoader.setCustomStateMapper(ModBlocks.doubleFlower2, (new StateMap.Builder()).ignore(BlockDoublePlant.VARIANT, BlockDoublePlant.field_181084_N).build());
 
-        // Ignore color in unstable cube, mana beacon, special flower, and petals (handled by color multiplier)
+        // Ignore color in unstable cube, mana beacon, special flower, and petals (handled by Block.colorMultiplier)
         ModelLoader.setCustomStateMapper(ModBlocks.unstableBlock, (new StateMap.Builder()).ignore(BotaniaStateProps.COLOR).build());
         ModelLoader.setCustomStateMapper(ModBlocks.manaBeacon, (new StateMap.Builder()).ignore(BotaniaStateProps.COLOR).build());
         ModelLoader.setCustomStateMapper(ModBlocks.petalBlock, (new StateMap.Builder()).ignore(BotaniaStateProps.COLOR).build());
@@ -761,16 +745,16 @@ public final class ModelHandler {
             ModelLoader.setCustomStateMapper(b, (new StateMap.Builder()).ignore(BlockModSlab.DUMMY).build());
         }
 
-        List<Block> otherSlabs = ImmutableList.copyOf(new Block[] {
-                ModFluffBlocks.livingwoodSlab, ModFluffBlocks.livingwoodPlankSlab, ModFluffBlocks.livingrockSlab, ModFluffBlocks.dreamwoodSlab, ModFluffBlocks.livingrockBrickSlab,
+        List<Block> otherSlabs = Lists.newArrayList(ModFluffBlocks.livingwoodSlab, ModFluffBlocks.livingwoodPlankSlab, ModFluffBlocks.livingrockSlab, ModFluffBlocks.dreamwoodSlab, ModFluffBlocks.livingrockBrickSlab,
                 ModFluffBlocks.dreamwoodPlankSlab, ModFluffBlocks.prismarineSlab, ModFluffBlocks.prismarineBrickSlab, ModFluffBlocks.darkPrismarineSlab,
                 ModFluffBlocks.reedSlab, ModFluffBlocks.thatchSlab, ModFluffBlocks.netherBrickSlab, ModFluffBlocks.soulBrickSlab, ModFluffBlocks.snowBrickSlab,
-                ModFluffBlocks.tileSlab, ModFluffBlocks.darkQuartzSlab, ModFluffBlocks.manaQuartzSlab, ModFluffBlocks.blazeQuartzSlab,
+                ModFluffBlocks.tileSlab, ModFluffBlocks.manaQuartzSlab, ModFluffBlocks.blazeQuartzSlab,
                 ModFluffBlocks.lavenderQuartzSlab, ModFluffBlocks.redQuartzSlab, ModFluffBlocks.elfQuartzSlab, ModFluffBlocks.sunnyQuartzSlab, ModFluffBlocks.dirtPathSlab,
-                ModFluffBlocks.shimmerrockSlab, ModFluffBlocks.shimmerwoodPlankSlab, ModFluffBlocks.endStoneSlab, ModFluffBlocks.enderBrickSlab
-        });
+                ModFluffBlocks.shimmerrockSlab, ModFluffBlocks.shimmerwoodPlankSlab, ModFluffBlocks.endStoneSlab, ModFluffBlocks.enderBrickSlab);
 
         for (Block b : otherSlabs) {
+            if (b == null) // Dark quartz disabled
+                continue;
             ModelLoader.setCustomStateMapper(b, (new StateMap.Builder()).ignore(BlockModSlab.DUMMY).build());
         }
 
@@ -787,16 +771,16 @@ public final class ModelHandler {
             ModelLoader.setCustomStateMapper(b, (new StateMap.Builder()).ignore(BlockModSlab.DUMMY, BlockSlab.HALF).build());
         }
         
-        List<Block> otherFullSlabs = ImmutableList.copyOf(new Block[] {
-                ModFluffBlocks.livingwoodSlabFull, ModFluffBlocks.livingwoodPlankSlabFull, ModFluffBlocks.livingrockSlabFull, ModFluffBlocks.dreamwoodSlabFull, ModFluffBlocks.livingrockBrickSlabFull,
+        List<Block> otherFullSlabs = Lists.newArrayList(ModFluffBlocks.livingwoodSlabFull, ModFluffBlocks.livingwoodPlankSlabFull, ModFluffBlocks.livingrockSlabFull, ModFluffBlocks.dreamwoodSlabFull, ModFluffBlocks.livingrockBrickSlabFull,
                 ModFluffBlocks.dreamwoodPlankSlabFull, ModFluffBlocks.prismarineSlabFull, ModFluffBlocks.prismarineBrickSlabFull, ModFluffBlocks.darkPrismarineSlabFull,
                 ModFluffBlocks.reedSlabFull, ModFluffBlocks.thatchSlabFull, ModFluffBlocks.netherBrickSlabFull, ModFluffBlocks.soulBrickSlabFull, ModFluffBlocks.snowBrickSlabFull,
                 ModFluffBlocks.tileSlabFull, ModFluffBlocks.darkQuartzSlabFull, ModFluffBlocks.manaQuartzSlabFull, ModFluffBlocks.blazeQuartzSlabFull,
                 ModFluffBlocks.lavenderQuartzSlabFull, ModFluffBlocks.redQuartzSlabFull, ModFluffBlocks.elfQuartzSlabFull, ModFluffBlocks.sunnyQuartzSlabFull, ModFluffBlocks.dirtPathSlabFull,
-                ModFluffBlocks.shimmerrockSlabFull, ModFluffBlocks.shimmerwoodPlankSlabFull, ModFluffBlocks.endStoneSlabFull, ModFluffBlocks.enderBrickSlabFull
-        });
+                ModFluffBlocks.shimmerrockSlabFull, ModFluffBlocks.shimmerwoodPlankSlabFull, ModFluffBlocks.endStoneSlabFull, ModFluffBlocks.enderBrickSlabFull);
 
         for (Block b : otherFullSlabs) {
+            if (b == null) // Dark quartz disabled
+                continue;
             ModelLoader.setCustomStateMapper(b, (new StateMap.Builder()).ignore(BlockModSlab.DUMMY, BlockSlab.HALF).build());
         }
 
@@ -812,7 +796,6 @@ public final class ModelHandler {
         Item item = Item.getItemFromBlock(ModBlocks.mushroom);
         for (EnumDyeColor color : EnumDyeColor.values()) {
             String name = GameData.getBlockRegistry().getNameForObject(ModBlocks.mushroom).toString();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "inventory_" + color.getName()));
             ModelLoader.setCustomModelResourceLocation(item, color.getMetadata(), new ModelResourceLocation(name, "inventory_" + color.getName()));
         }
     }
@@ -821,14 +804,12 @@ public final class ModelHandler {
         Item item = Item.getItemFromBlock(ModBlocks.flower);
         for (EnumDyeColor color : EnumDyeColor.values()) {
             String name = GameData.getBlockRegistry().getNameForObject(ModBlocks.flower).toString();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "inventory_" + color.getName()));
             ModelLoader.setCustomModelResourceLocation(item, color.getMetadata(), new ModelResourceLocation(name, "inventory_" + color.getName()));
         }
 
         item = Item.getItemFromBlock(ModBlocks.shinyFlower);
         for (EnumDyeColor color : EnumDyeColor.values()) {
             String name = GameData.getBlockRegistry().getNameForObject(ModBlocks.shinyFlower).toString();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "inventory_" + color.getName()));
             ModelLoader.setCustomModelResourceLocation(item, color.getMetadata(), new ModelResourceLocation(name, "inventory_" + color.getName()));
         }
 
@@ -836,7 +817,6 @@ public final class ModelHandler {
         for (EnumDyeColor color : BotaniaStateProps.DOUBLEFLOWER_VARIANT_1.getAllowedValues()) {
             String name = GameData.getBlockRegistry().getNameForObject(ModBlocks.doubleFlower1).toString();
             String variant = "inventory_" + color.getName();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, variant));
             ModelLoader.setCustomModelResourceLocation(item, color.getMetadata(), new ModelResourceLocation(name, variant));
         }
 
@@ -844,7 +824,6 @@ public final class ModelHandler {
         for (EnumDyeColor color : BotaniaStateProps.DOUBLEFLOWER_VARIANT_2.getAllowedValues()) {
             String name = GameData.getBlockRegistry().getNameForObject(ModBlocks.doubleFlower2).toString();
             String variant = "inventory_" + color.getName();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, variant));
             ModelLoader.setCustomModelResourceLocation(item, color.getMetadata() - 8, new ModelResourceLocation(name, variant));
         }
     }
@@ -855,35 +834,29 @@ public final class ModelHandler {
 
         for (EnumDyeColor e : BotaniaStateProps.PAVEMENT_COLOR.getAllowedValues()) {
             String variant = "color=" + e.getName();
-            switch (e) {
+            switch (e) { // Explicit switch needed because saved meta does not match EnumDyeColor
                 case BLACK: {
-                    ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, variant));
                     ModelLoader.setCustomModelResourceLocation(item, 1, new ModelResourceLocation(name, variant));
                     break;
                 }
                 case BLUE: {
-                    ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, variant));
                     ModelLoader.setCustomModelResourceLocation(item, 2, new ModelResourceLocation(name, variant));
                     break;
                 }
                 case RED: {
-                    ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, variant));
                     ModelLoader.setCustomModelResourceLocation(item, 3, new ModelResourceLocation(name, variant));
                     break;
                 }
                 case YELLOW: {
-                    ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, variant));
                     ModelLoader.setCustomModelResourceLocation(item, 4, new ModelResourceLocation(name, variant));
                     break;
                 }
                 case GREEN: {
-                    ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, variant));
                     ModelLoader.setCustomModelResourceLocation(item, 5, new ModelResourceLocation(name, variant));
                     break;
                 }
                 case WHITE:
                 default: {
-                    ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, variant));
                     ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(name, variant));
                     break;
                 }
@@ -906,7 +879,8 @@ public final class ModelHandler {
 
         registerItemModel(ModFluffBlocks.blazeQuartzStairs);
         registerItemModel(ModFluffBlocks.darkPrismarineStairs);
-        registerItemModel(ModFluffBlocks.darkQuartzStairs);
+        if (ConfigHandler.darkQuartzEnabled)
+            registerItemModel(ModFluffBlocks.darkQuartzStairs);
         registerItemModel(ModFluffBlocks.dreamwoodStairs);
         registerItemModel(ModFluffBlocks.dreamwoodPlankStairs);
         registerItemModel(ModFluffBlocks.elfQuartzStairs);
@@ -951,7 +925,8 @@ public final class ModelHandler {
         registerItemModel(ModFluffBlocks.livingrockBrickSlab);
 
         registerItemModel(ModFluffBlocks.blazeQuartzSlab);
-        registerItemModel(ModFluffBlocks.darkQuartzSlab);
+        if (ConfigHandler.darkQuartzEnabled)
+            registerItemModel(ModFluffBlocks.darkQuartzSlab);
         registerItemModel(ModFluffBlocks.elfQuartzSlab);
         registerItemModel(ModFluffBlocks.lavenderQuartzSlab);
         registerItemModel(ModFluffBlocks.manaQuartzSlab);
@@ -981,14 +956,12 @@ public final class ModelHandler {
         Item item = Item.getItemFromBlock(ModFluffBlocks.biomeStoneWall);
         for (BiomeStoneVariant variant : BotaniaStateProps.BIOMESTONEWALL_VARIANT.getAllowedValues()) {
             String variantName = "inventory_" + variant.getName();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation("botania:biomeStoneA0Wall", variantName));
             ModelLoader.setCustomModelResourceLocation(item, variant.ordinal() - 8, new ModelResourceLocation("botania:biomeStoneA0Wall", variantName));
         }
 
         item = Item.getItemFromBlock(ModFluffBlocks.stoneWall);
         for (FutureStoneVariant variant : BotaniaStateProps.FUTURESTONEWALL_VARIANT.getAllowedValues()) {
             String variantName = "inventory_" + variant.getName();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation("botania:stone0Wall", variantName));
             ModelLoader.setCustomModelResourceLocation(item, variant.ordinal(), new ModelResourceLocation("botania:stone0Wall", variantName));
         }
 
@@ -1010,18 +983,16 @@ public final class ModelHandler {
         String name = GameData.getBlockRegistry().getNameForObject(ModBlocks.altar).toString();
         for (int i = 0; i < AltarVariant.values().length - 1; i++) { // Off by one on purpose to exclude MOSSY
             String variantName = "variant=" + AltarVariant.values()[i].getName();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, variantName));
             ModelLoader.setCustomModelResourceLocation(item, i, new ModelResourceLocation(name, variantName));
         }
     }
 
     private static void registerQuartzBlocks() {
-        for (Block b : ImmutableList.of(ModFluffBlocks.blazeQuartz, ModFluffBlocks.darkQuartz, ModFluffBlocks.elfQuartz, ModFluffBlocks.lavenderQuartz, ModFluffBlocks.manaQuartz, ModFluffBlocks.redQuartz, ModFluffBlocks.sunnyQuartz)) {
+        for (Block b : Lists.newArrayList(ModFluffBlocks.blazeQuartz, ModFluffBlocks.darkQuartz, ModFluffBlocks.elfQuartz, ModFluffBlocks.lavenderQuartz, ModFluffBlocks.manaQuartz, ModFluffBlocks.redQuartz, ModFluffBlocks.sunnyQuartz)) {
+            if (b == null) // Dark quartz disabled
+                continue;
             Item item = Item.getItemFromBlock(b);
             String name = GameData.getBlockRegistry().getNameForObject(b).toString();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "variant=normal"));
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "variant=chiseled"));
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "variant=pillar_y"));
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(name, "variant=normal"));
             ModelLoader.setCustomModelResourceLocation(item, 1, new ModelResourceLocation(name, "variant=chiseled"));
             ModelLoader.setCustomModelResourceLocation(item, 2, new ModelResourceLocation(name, "variant=pillar_y"));
@@ -1032,7 +1003,6 @@ public final class ModelHandler {
         Item item = Item.getItemFromBlock(ModBlocks.lightRelay);
         String name = GameData.getBlockRegistry().getNameForObject(ModBlocks.lightRelay).toString();
         for (LuminizerVariant v : LuminizerVariant.values()) {
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "powered=false,variant=" + v.getName()));
             ModelLoader.setCustomModelResourceLocation(item, v.ordinal(), new ModelResourceLocation(name, "powered=false,variant=" + v.getName()));
         }
     }
@@ -1043,10 +1013,8 @@ public final class ModelHandler {
         for (PoolVariant v : PoolVariant.values()) {
             if (v == PoolVariant.CREATIVE) {
                 // Special case to have mana water layer
-                ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "inventory_creative"));
                 ModelLoader.setCustomModelResourceLocation(item, v.ordinal(), new ModelResourceLocation(name, "inventory_creative"));
             } else {
-                ModelLoader.registerItemVariants(item, new ModelResourceLocation(name, "variant=" + v.getName()));
                 ModelLoader.setCustomModelResourceLocation(item, v.ordinal(), new ModelResourceLocation(name, "variant=" + v.getName()));
             }
         }
@@ -1057,7 +1025,6 @@ public final class ModelHandler {
         for (T e : enumclazz.getEnumConstants()) {
             String baseName = GameData.getBlockRegistry().getNameForObject(b).toString();
             String variantName = variantHeader + "=" + e.getName();
-            ModelLoader.registerItemVariants(item, new ModelResourceLocation(baseName, variantName));
             ModelLoader.setCustomModelResourceLocation(item, e.ordinal(), new ModelResourceLocation(baseName, variantName));
         }
     }

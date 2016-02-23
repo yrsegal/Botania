@@ -17,7 +17,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -27,7 +26,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.opengl.GL11;
 
 import vazkii.botania.api.BotaniaAPI;
@@ -36,7 +34,6 @@ import vazkii.botania.api.item.IWireframeCoordinateListProvider;
 import vazkii.botania.api.wand.ICoordBoundItem;
 import vazkii.botania.api.wand.IWireframeAABBProvider;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public final class BoundTileRenderer {
 
@@ -98,21 +95,19 @@ public final class BoundTileRenderer {
 		renderBlockOutlineAt(pos, color, 1F);
 	}
 
-	private double getRenderPosX() { // todo 1.8
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSX);
-	}
-
-	private double getRenderPosY() {
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSY);
-	}
-
-	private double getRenderPosZ() {
-		return ObfuscationReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), LibObfuscation.RENDERPOSZ);
-	}
-
 	private void renderBlockOutlineAt(BlockPos pos, int color, float thickness) {
+		double renderPosX, renderPosY, renderPosZ;
+
+		try {
+			renderPosX = (double) ClientMethodHandles.renderPosX_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosY = (double) ClientMethodHandles.renderPosY_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+			renderPosZ = (double) ClientMethodHandles.renderPosZ_getter.invokeExact(Minecraft.getMinecraft().getRenderManager());
+		} catch (Throwable t) {
+			return;
+		}
+
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(pos.getX() - getRenderPosX(), pos.getY() - getRenderPosY(), pos.getZ() - getRenderPosZ() + 1);
+		GlStateManager.translate(pos.getX() - renderPosX, pos.getY() - renderPosY, pos.getZ() - renderPosZ + 1);
 		Color colorRGB = new Color(color);
 		GL11.glColor4ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue(), (byte) 255);
 
@@ -137,11 +132,12 @@ public final class BoundTileRenderer {
 				renderBlockOutline(axis);
 
 				GL11.glLineWidth(thickness + 3F);
-				GL11.glColor3ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue());
+				GL11.glColor4ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue(), ((byte) 64));
 				renderBlockOutline(axis);
 			}
 		}
 
+		GL11.glColor4ub(((byte) 255), ((byte) 255), ((byte) 255), ((byte) 255));
 		GlStateManager.popMatrix();
 	}
 

@@ -28,15 +28,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ITickable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.StatCollector;
-
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+
 import org.lwjgl.opengl.GL11;
 
 import vazkii.botania.api.BotaniaAPI;
@@ -60,13 +57,13 @@ import vazkii.botania.client.lib.LibResources;
 import vazkii.botania.common.Botania;
 import vazkii.botania.common.block.ModBlocks;
 import vazkii.botania.common.block.tile.TileMod;
+import vazkii.botania.common.core.handler.MethodHandles;
 import vazkii.botania.common.core.handler.ConfigHandler;
 import vazkii.botania.common.core.handler.ManaNetworkHandler;
 import vazkii.botania.common.core.helper.Vector3;
 import vazkii.botania.common.item.ItemManaTablet;
 import vazkii.botania.common.item.ModItems;
 import vazkii.botania.common.lib.LibMisc;
-import vazkii.botania.common.lib.LibObfuscation;
 import vazkii.botania.common.network.PacketHandler;
 import vazkii.botania.common.network.PacketSparkleFX;
 
@@ -154,7 +151,11 @@ public class TilePool extends TileMod implements IManaPool, IDyablePool, IKeyLoc
 				item.setDead();
 		}
 
-		int age = ObfuscationReflectionHelper.getPrivateValue(EntityItem.class, item, LibObfuscation.AGE);
+		int age;
+		try {
+			age = ((int) MethodHandles.itemAge_getter.invokeExact(item));
+		} catch (Throwable throwable) { return false; }
+
 		if(age > 100 && age < 130 || !catalystsRegistered)
 			return false;
 
@@ -164,14 +165,18 @@ public class TilePool extends TileMod implements IManaPool, IDyablePool, IKeyLoc
 				if(getCurrentMana() >= mana) {
 					recieveMana(-mana);
 
-					stack.stackSize--;
-					if(stack.stackSize == 0)
-						item.setDead();
+					if(!worldObj.isRemote) {
+						stack.stackSize--;
+						if(stack.stackSize == 0)
+							item.setDead();
 
-					ItemStack output = recipe.getOutput().copy();
-					EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output);
-					ObfuscationReflectionHelper.setPrivateValue(EntityItem.class, outputItem, 105, LibObfuscation.AGE);
-					worldObj.spawnEntityInWorld(outputItem);
+						ItemStack output = recipe.getOutput().copy();
+						EntityItem outputItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output);
+						try {
+							MethodHandles.itemAge_setter.invokeExact(outputItem, 105);
+						} catch (Throwable ignored) {}
+						worldObj.spawnEntityInWorld(outputItem);
+					}
 
 					craftingFanciness();
 					didChange = true;

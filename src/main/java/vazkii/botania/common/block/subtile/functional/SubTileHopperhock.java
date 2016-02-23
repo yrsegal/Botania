@@ -33,17 +33,16 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.StatCollector;
 
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.opengl.GL11;
 
 import vazkii.botania.api.lexicon.LexiconEntry;
 import vazkii.botania.api.mana.IManaItem;
 import vazkii.botania.api.subtile.RadiusDescriptor;
 import vazkii.botania.api.subtile.SubTileFunctional;
+import vazkii.botania.common.core.handler.MethodHandles;
 import vazkii.botania.common.core.helper.InventoryHelper;
 import vazkii.botania.common.lexicon.LexiconData;
 import vazkii.botania.common.lib.LibMisc;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public class SubTileHopperhock extends SubTileFunctional {
 
@@ -74,7 +73,13 @@ public class SubTileHopperhock extends SubTileFunctional {
 		int slowdown = getSlowdownFactor();
 		
 		for(EntityItem item : items) {
-			int age = ObfuscationReflectionHelper.getPrivateValue(EntityItem.class, item, LibObfuscation.AGE);
+			int age;
+			try {
+				age = (int) MethodHandles.itemAge_getter.invokeExact(item);
+			} catch (Throwable t) {
+				continue;
+			}
+
 			if(age < (60 + slowdown) || age >= 105 && age < 110 || item.isDead)
 				continue;
 

@@ -18,13 +18,8 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 import vazkii.botania.api.state.BotaniaStateProps;
-import vazkii.botania.client.lib.LibResources;
-import vazkii.botania.client.model.ModelIncensePlate;
 import vazkii.botania.common.block.tile.TileIncensePlate;
 
 import java.util.Map;
@@ -33,6 +28,7 @@ public class RenderTileIncensePlate extends TileEntitySpecialRenderer<TileIncens
 
 	private static final Map<EnumFacing, Integer> ROTATIONS = ImmutableMap.of(EnumFacing.NORTH, 180, EnumFacing.SOUTH, 0, EnumFacing.WEST, 270, EnumFacing.EAST, 90);
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void renderTileEntityAt(TileIncensePlate plate, double d0, double d1, double d2, float ticks, int digProgress) {
 		if (plate != null && plate.getWorld() != null && !plate.getWorld().isBlockLoaded(plate.getPos(), false)) {

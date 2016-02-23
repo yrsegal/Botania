@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.state.IBlockState;
@@ -21,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.BlockPos;
@@ -43,7 +45,7 @@ public class ItemTerraformRod extends ItemMod implements IManaUsingItem, IBlockP
 
 	private static final int COST_PER = 55;
 
-	static final List<String> validBlocks = Arrays.asList(new String[] {
+	private static final List<String> validBlocks = ImmutableList.of(
 			"stone",
 			"dirt",
 			"grass",
@@ -54,19 +56,19 @@ public class ItemTerraformRod extends ItemMod implements IManaUsingItem, IBlockP
 			"mycelium",
 			"podzol",
 			"sandstone",
-
-			// Mod support
 			"blockDiorite",
 			"stoneDiorite",
 			"blockGranite",
 			"stoneGranite",
 			"blockAndesite",
 			"stoneAndesite",
+
+			// Mod support
 			"marble",
 			"blockMarble",
 			"limestone",
 			"blockLimestone"
-	});
+	);
 
 	public ItemTerraformRod() {
 		super();
@@ -103,12 +105,12 @@ public class ItemTerraformRod extends ItemMod implements IManaUsingItem, IBlockP
 		int yCenter = (int) par3EntityPlayer.posY;
 		int zCenter = (int) par3EntityPlayer.posZ;
 
-		if(yCenter < 62) // Not below sea level
+		if(yCenter < par2World.getSeaLevel()) // Not below sea level
 			return;
 
 		int yStart = yCenter + range;
 
-		List<CoordsWithBlock> blocks = new ArrayList();
+		List<CoordsWithBlock> blocks = new ArrayList<>();
 
 		for(int i = -range; i < range + 1; i++)
 			for(int j = -range; j < range + 1; j++) {
@@ -120,11 +122,13 @@ public class ItemTerraformRod extends ItemMod implements IManaUsingItem, IBlockP
 					BlockPos pos = new BlockPos(xCenter + i, yStart + k, zCenter + j);
 					IBlockState state = par2World.getBlockState(pos);
 
+					if (Item.getItemFromBlock(state.getBlock()) == null)
+						break;
 					int[] ids = OreDictionary.getOreIDs(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
 					for(int id : ids)
 						if(validBlocks.contains(OreDictionary.getOreName(id))) {
 							boolean hasAir = false;
-							List<BlockPos> airBlocks = new ArrayList();
+							List<BlockPos> airBlocks = new ArrayList<>();
 
 							for(EnumFacing dir : LibMisc.CARDINAL_DIRECTIONS) {
 								BlockPos pos_ = pos.offset(dir);

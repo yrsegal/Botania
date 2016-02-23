@@ -11,6 +11,7 @@
 package vazkii.botania.common.item.relic;
 
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -24,13 +25,13 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.RecipeSorter.Category;
 import vazkii.botania.api.item.IExtendedWireframeCoordinateListProvider;
 import vazkii.botania.api.item.IWireframeCoordinateListProvider;
 import vazkii.botania.common.achievement.ICraftAchievement;
 import vazkii.botania.common.achievement.ModAchievements;
+import vazkii.botania.common.core.handler.MethodHandles;
 import vazkii.botania.common.crafting.recipe.AesirRingRecipe;
 import vazkii.botania.common.item.ModItems;
 import vazkii.botania.common.lib.LibItemNames;
@@ -41,7 +42,6 @@ import com.google.common.collect.Multimap;
 
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public class ItemAesirRing extends ItemRelicBauble implements IExtendedWireframeCoordinateListProvider, ICraftAchievement {
 
@@ -61,26 +61,25 @@ public class ItemAesirRing extends ItemRelicBauble implements IExtendedWireframe
 			if(stack.getItem() != null && stack.getItem() == this) {
 				event.entityItem.setDead();
 
-				String user = getSoulbindUsername(stack);
+				UUID user = getSoulbindUUID(stack);
 				for(Item item : new Item[] { ModItems.thorRing, ModItems.lokiRing, ModItems.odinRing }) {
 					ItemStack stack1 = new ItemStack(item);
-					bindToUsername(user, stack1);
+					bindToUUID(user, stack1);
 					EntityItem entity = new EntityItem(event.entityItem.worldObj, event.entityItem.posX, event.entityItem.posY, event.entityItem.posZ, stack1);
 					entity.motionX = event.entityItem.motionX;
 					entity.motionY = event.entityItem.motionY;
 					entity.motionZ = event.entityItem.motionZ;
-					ObfuscationReflectionHelper.setPrivateValue(
-						EntityItem.class,
-						entity,
-						ObfuscationReflectionHelper.getPrivateValue(EntityItem.class, event.entityItem, LibObfuscation.AGE),
-						LibObfuscation.AGE
-					);
-					ObfuscationReflectionHelper.setPrivateValue(
-							EntityItem.class,
-							entity,
-							ObfuscationReflectionHelper.getPrivateValue(EntityItem.class, event.entityItem, LibObfuscation.PICKUP_DELAY),
-							LibObfuscation.PICKUP_DELAY
-					);
+
+					try {
+						MethodHandles.itemAge_setter.invokeExact(entity, MethodHandles.itemAge_getter.invokeExact(entity));
+					} catch (Throwable ignored) {}
+
+					int pickupDelay = 0;
+					try {
+						pickupDelay = (int) MethodHandles.pickupDelay_getter.invokeExact(event.entityItem);
+					} catch (Throwable ignored) {}
+					entity.setPickupDelay(pickupDelay);
+
 					entity.worldObj.spawnEntityInWorld(entity);
 				}
 			}

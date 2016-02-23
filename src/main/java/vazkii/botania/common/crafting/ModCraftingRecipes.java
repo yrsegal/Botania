@@ -1392,7 +1392,7 @@ public final class ModCraftingRecipes {
 		// Wing Recipes
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModItems.flightTiara, 1, 1), new ItemStack(ModItems.flightTiara, 1, Short.MAX_VALUE), "gemQuartz"));
 		for(int i = 0; i < 7; i++)
-			GameRegistry.addShapelessRecipe(new ItemStack(ModItems.flightTiara, 1, 2 + i), new ItemStack(ModItems.flightTiara, 1, Short.MAX_VALUE), new ItemStack(ModItems.quartz, 1, i));
+			GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(ModItems.flightTiara, 1, 2 + i), new ItemStack(ModItems.flightTiara, 1, Short.MAX_VALUE), LibOreDict.QUARTZ[i]));
 		recipesWings = BotaniaAPI.getLatestAddedRecipes(8);
 
 		// Mana Fluxfield Recipe
@@ -1631,7 +1631,7 @@ public final class ModCraftingRecipes {
 			});
 
 			for(int i = 0; i < count; i++) {
-				List<Object> recipe = new ArrayList();
+				List<Object> recipe = new ArrayList<>();
 				for(int j = 0; j < 3; j++) {
 					String s = "";
 					for(int k = 0; k < 3; k++)
@@ -1785,8 +1785,8 @@ public final class ModCraftingRecipes {
 		recipeBlackHoleTalisman = BotaniaAPI.getLatestAddedRecipe();
 
 		// 1.8 Stone Recipes
-		recipe18StoneBrick = new ArrayList();
-		recipe18StoneChisel = new ArrayList();
+		recipe18StoneBrick = new ArrayList<>();
+		recipe18StoneChisel = new ArrayList<>();
 		for(int i = 0; i < 4; i++) {
 			addOreDictRecipe(new ItemStack(ModFluffBlocks.stone, 4, i + 8),
 					"SS", "SS",
@@ -2313,9 +2313,9 @@ public final class ModCraftingRecipes {
 	}
 
 	private static IRecipe addQuartzRecipes(int meta, Item req, Block block, Block stairs, Block slab) {
-		GameRegistry.addRecipe(new ItemStack(block),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(block),
 				"QQ", "QQ",
-				'Q', new ItemStack(ModItems.quartz, 1, meta));
+				'Q', LibOreDict.QUARTZ[meta]));
 		GameRegistry.addRecipe(new ItemStack(block, 2, 2),
 				"Q", "Q",
 				'Q', block);

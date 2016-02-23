@@ -12,7 +12,6 @@ package vazkii.botania.common.block.subtile.generating;
 
 import java.util.List;
 
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
@@ -21,12 +20,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import vazkii.botania.api.lexicon.LexiconEntry;
 import vazkii.botania.api.subtile.RadiusDescriptor;
 import vazkii.botania.api.subtile.SubTileGenerating;
+import vazkii.botania.common.core.handler.MethodHandles;
 import vazkii.botania.common.lexicon.LexiconData;
-import vazkii.botania.common.lib.LibObfuscation;
 
 public class SubTileGourmaryllis extends SubTileGenerating {
 
@@ -57,7 +55,15 @@ public class SubTileGourmaryllis extends SubTileGenerating {
 
 		for(EntityItem item : items) {
 			ItemStack stack = item.getEntityItem();
-			if(stack != null && stack.getItem() instanceof ItemFood && !item.isDead && ((Integer) ObfuscationReflectionHelper.getPrivateValue(EntityItem.class, item, LibObfuscation.AGE)) >= slowdown) {
+
+			int age;
+			try {
+				age = (int) MethodHandles.itemAge_getter.invokeExact(item);
+			} catch (Throwable t) {
+				continue;
+			}
+
+			if(stack != null && stack.getItem() instanceof ItemFood && !item.isDead && age >= slowdown) {
 				if(cooldown <= 0) {
 					int val = ((ItemFood) stack.getItem()).getHealAmount(stack);
 					storedMana = val * val * 64;
