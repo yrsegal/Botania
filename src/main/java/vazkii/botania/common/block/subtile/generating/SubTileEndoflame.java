@@ -12,6 +12,7 @@ package vazkii.botania.common.block.subtile.generating;
 
 import java.util.List;
 
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.world.WorldServer;
 import vazkii.botania.api.lexicon.LexiconEntry;
 import vazkii.botania.api.subtile.RadiusDescriptor;
 import vazkii.botania.api.subtile.SubTileGenerating;
@@ -40,7 +42,7 @@ public class SubTileEndoflame extends SubTileGenerating {
 
 		if(linkedCollector != null) {
 			if(burnTime == 0) {
-				if(mana < getMaxMana()) {
+				if(!supertile.getWorld().isRemote && mana < getMaxMana()) {
 					boolean didSomething = false;
 
 					int slowdown = getSlowdownFactor();
@@ -71,11 +73,9 @@ public class SubTileEndoflame extends SubTileGenerating {
 										item.setDead();
 
 									didSomething = true;
-								} else {
-						            item.worldObj.spawnParticle(EnumParticleTypes.SMOKE_LARGE, item.posX, item.posY + 0.1, item.posZ, 0.0D, 0.0D, 0.0D);
-						            item.worldObj.spawnParticle(EnumParticleTypes.FLAME, item.posX, item.posY, item.posZ, 0.0D, 0.0D, 0.0D);
+									((WorldServer) item.worldObj).spawnParticle(EnumParticleTypes.SMOKE_LARGE, item.posX, item.posY + 0.1, item.posZ, 5, 0, 0, 0, 0, new int[0]);
+									((WorldServer) item.worldObj).spawnParticle(EnumParticleTypes.FLAME, item.posX, item.posY + 0.5, item.posZ, 1, 0, 0, 0, 0, new int[0]);
 								}
-
 
 								break;
 							}

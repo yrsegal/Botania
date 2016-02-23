@@ -17,15 +17,15 @@
         - Kekimurus: good to go
         - Rafflowsia: good to go
         - spectrolus: good to go
-        - dandelifeon:
-        - daybloom:
-        - endoflame:
-        - entropinnyum:
-        - gourmaryllis:
-        - hydroangeas:
-        - narslimmus:
-        - nightshade:
-        - thermalily:
+        - dandelifeon: already serversided
+        - daybloom: serversided enough (?)
+        - endoflame: good to go
+        - entropinnyum: serversided enough
+        - gourmaryllis: already serversided
+        - hydroangeas: serversided enough
+        - narslimmus: serversided enough
+        - nightshade: serversided enough (?)
+        - thermalily: serversided enough
     - Functional flora:
         - agricarnation: good to go
         - bellethorn/dreadthorn: good to go

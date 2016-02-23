@@ -40,7 +40,7 @@ public class SubTileDaybloom extends SubTilePassiveGenerating {
 		super.onUpdate();
 
 		if(isPrime() && (!savedPosition || !supertile.getPos().equals(primePosition)))
-			supertile.getWorld().setBlockToAir(supertile.getPos());
+			supertile.getWorld().destroyBlock(supertile.getPos(), false);
 	}
 
 	public void setPrimusPosition() {
