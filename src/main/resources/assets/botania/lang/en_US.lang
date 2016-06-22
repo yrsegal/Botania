@@ -1336,6 +1336,43 @@ tile.botania:flower.solegnolia.reference=All your magnets are belong to us
 tile.botania:flower.solegnoliaChibi.name=Solegnolia Petite
 tile.botania:flower.solegnoliaChibi.reference=All your magnets are belong to us
 
+# FLUID NAMES
+fluid.botania_manasteel.name=Molten Manasteel
+fluid.botania_terrasteel.name=Molten Terrasteel
+fluid.botania_elementium.name=Molten Elementium
+
+# TINKERS MATERIAL NAMES
+material.botania_manasteel.name=Manasteel
+material.botania_terrasteel.name=Terrasteel
+material.botania_elementium.name=Elementium
+material.botania_livingwood.name=Livingwood
+material.botania_dreamwood.name=Dreamwood
+material.botania_livingrock.name=Livingrock
+
+# TINKERS MODIFIER NAMES
+modifier.arcane.name=Arcane
+modifier.worldformed.name=Worldformed
+modifier.unyielding.name=Unyielding
+modifier.elsetouched.name=Elsetouched
+modifier.alfwrought.name=Alfwrought
+modifier.regrowth.name=Regrowth
+modifier.idealistic.name=Idealistic
+modifier.stargazer.name=Stargazer
+modifier.elemental.name=Elemental
+modifier.enduring.name=Enduring
+
+# TINKERS MODIFIER DESCRIPTIONS
+modifier.arcane.desc=§oIt's learning...§r\nIt'll probably last longer if it learns to use itself right!
+modifier.worldformed.desc=§oAncient and mysterious!§r\nWho knows what this tool could do in the right circumstances?
+modifier.unyielding.desc=§oStrong as the earth§r\nIt'll hold on right until the end!
+modifier.elsetouched.desc=§oSomething feels unnatural§r\nIt bears markings you've never seen before...
+modifier.alfwrought.desc=§oFine craftmanship§r\nElves are good at metal forging, apparently. Time to imitate their designs!
+modifier.regrowth.desc=§oIt's alive!§r\nThe wood shudders under your hands, reforming itself occasionally.
+modifier.idealistic.desc=§oNever stop dreaming§r\nYou can't help but dream when you look at the swirling designs of the tool.
+modifier.stargazer.desc=§oGuided by the stars§r\nFight in the domain of dreams, and let your dreams help you.
+modifier.elemental.desc=§oIt feels different§r\nThe environment makes this tool shift and warp.
+modifier.enduring.desc=§oUntil the end§r\nThis tool feels better built the closer it is to breaking.
+
 # ITEM NAMES
 item.botania:lexicon.name=Lexica Botania
 item.botania:lexicon.bevo=Lexica Botana

@@ -22,6 +22,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import vazkii.botania.api.BotaniaAPI;
 import vazkii.botania.api.recipe.RecipeManaInfusion;
 import vazkii.botania.api.state.BotaniaStateProps;
+import vazkii.botania.api.state.enums.StorageVariant;
 import vazkii.botania.api.subtile.SubTileEntity;
 import vazkii.botania.client.lib.LibResources;
 import vazkii.botania.common.block.corporea.BlockCorporeaCrystalCube;
@@ -379,6 +380,10 @@ public final class ModBlocks {
 		}
 
 		OreDictionary.registerOre(LibOreDict.BLAZE_BLOCK, blazeBlock);
+
+		OreDictionary.registerOre(LibOreDict.BLOCK_MANASTEEL, new ItemStack(storage, 1, StorageVariant.MANASTEEL.ordinal()));
+		OreDictionary.registerOre(LibOreDict.BLOCK_TERRASTEEL, new ItemStack(storage, 1, StorageVariant.TERRASTEEL.ordinal()));
+		OreDictionary.registerOre(LibOreDict.BLOCK_ELEMENTIUM, new ItemStack(storage, 1, StorageVariant.ELEMENTIUM.ordinal()));
 
 		// Vanilla OreDict entries
 		OreDictionary.registerOre("dirt", Blocks.DIRT);

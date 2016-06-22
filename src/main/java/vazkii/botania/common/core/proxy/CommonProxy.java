@@ -28,6 +28,7 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -145,6 +146,8 @@ public class CommonProxy {
 
 		FMLInterModComms.sendMessage("ProjectE", "interdictionblacklist", EntityManaBurst.class.getCanonicalName());
 
+		initTinkers();
+
 		if(Botania.bcTriggersLoaded)
 			new StatementAPIPlugin();
 	}
@@ -197,6 +200,15 @@ public class CommonProxy {
 		BotaniaAPI.blacklistEntityFromGravityRod(EntitySignalFlare.class);
 		BotaniaAPI.blacklistEntityFromGravityRod(EntitySpark.class);
 		BotaniaAPI.blacklistEntityFromGravityRod(EntityPlayerMover.class);
+	}
+
+	private void initTinkers() {
+		if(Loader.isModLoaded("tconstruct")) {
+			try {
+				Class clazz = Class.forName("vazkii.botania.common.integration.tinkers.TinkersIntegration");
+				clazz.newInstance();
+			} catch(Throwable ignored) {}
+		}
 	}
 
 	// Overriding the internal method handler will break everything as it changes regularly.

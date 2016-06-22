@@ -26,7 +26,8 @@ repositories {
         url = "http://chickenbones.net/maven/"
     }
     maven {
-        url "http://dvs1.progwml6.com/files/maven"
+        name 'DVS1 Maven FS'
+        url 'http://dvs1.progwml6.com/files/maven'
     }
 }
 
@@ -68,6 +69,8 @@ dependencies {
         'Baubles-deobf.jar'
     )
     deobfCompile "mezz.jei:jei_1.9.4:3.4.0.202"
+    deobfCompile "slimeknights.mantle:Mantle:1.9.4-0.10.2.jenkins150"
+    deobfCompile "slimeknights:TConstruct:1.9.4-2.3.2.jenkins260"
 
     //and a bit more for SCP
     sshAntTask "org.apache.ant:ant-jsch:1.7.1", "jsch:jsch:0.1.29"
