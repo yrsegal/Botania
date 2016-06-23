@@ -7,6 +7,8 @@ import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import vazkii.botania.api.BotaniaAPI;
+import vazkii.botania.common.integration.tinkers.traits.ElsetouchHelper;
+import vazkii.botania.common.integration.tinkers.traits.TraitElsetouched;
 import vazkii.botania.common.item.ModItems;
 import vazkii.botania.common.item.equipment.tool.manasteel.ItemManasteelPick;
 import vazkii.botania.common.item.equipment.tool.terrasteel.ItemTerraPick;
@@ -23,7 +25,7 @@ public class ItemElementiumPick extends ItemManasteelPick {
 	public void onHarvestDrops(HarvestDropsEvent event) {
 		if(event.getHarvester() != null) {
 			ItemStack stack = event.getHarvester().getHeldItemMainhand();
-			if(stack != null && (stack.getItem() == this || stack.getItem() == ModItems.terraPick && ItemTerraPick.isTipped(stack))) {
+			if(stack != null && ((stack.getItem() == this || stack.getItem() == ModItems.terraPick && ItemTerraPick.isTipped(stack)) || ElsetouchHelper.hasElsetouch(stack))) {
 				for(int i = 0; i < event.getDrops().size(); i++) {
 					ItemStack drop = event.getDrops().get(i);
 					if(drop != null) {

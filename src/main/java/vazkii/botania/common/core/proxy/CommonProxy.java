@@ -203,7 +203,7 @@ public class CommonProxy {
 	}
 
 	private void initTinkers() {
-		if(Loader.isModLoaded("tconstruct")) {
+		if(Botania.tinkersLoaded) {
 			try {
 				Class clazz = Class.forName("vazkii.botania.common.integration.tinkers.TinkersIntegration");
 				clazz.newInstance();

@@ -40,21 +40,26 @@ public class PixieHandler {
 				chance += getChance(baubles.getStackInSlot(i));
 
 			if(Math.random() < chance) {
-				EntityPixie pixie = new EntityPixie(player.worldObj);
-				pixie.setPosition(player.posX, player.posY + 2, player.posZ);
-
-				if(((ItemElementiumHelm) ModItems.elementiumHelm).hasArmorSet(player)) {
-					pixie.setApplyPotionEffect(new PotionEffect(potions[event.getEntityLiving().worldObj.rand.nextInt(potions.length)], 40, 0));
-				}
-
 				float dmg = 4;
 				if(stack != null && stack.getItem() == ModItems.elementiumSword)
 					dmg += 2;
-
-				pixie.setProps((EntityLivingBase) event.getSource().getEntity(), player, 0, dmg);
-				player.worldObj.spawnEntityInWorld(pixie);
+				boolean useEffects = ((ItemElementiumHelm) ModItems.elementiumHelm).hasArmorSet(player);
+				summonPixie(player, (EntityLivingBase) event.getSource().getEntity(), dmg, useEffects);
 			}
 		}
+	}
+
+	public static void summonPixie(EntityLivingBase summoner, EntityLivingBase target, float damage, boolean useEffects) {
+		if (summoner.worldObj.isRemote) return;
+
+		EntityPixie pixie = new EntityPixie(summoner.worldObj);
+		pixie.setPosition(summoner.posX, summoner.posY + 2, summoner.posZ);
+
+		if(useEffects)
+			pixie.setApplyPotionEffect(new PotionEffect(potions[summoner.worldObj.rand.nextInt(potions.length)], 40, 0));
+
+		pixie.setProps(target, summoner, 0, damage);
+		summoner.worldObj.spawnEntityInWorld(pixie);
 	}
 
 	private float getChance(ItemStack stack) {

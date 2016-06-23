@@ -1351,7 +1351,7 @@ material.botania_livingrock.name=Livingrock
 
 # TINKERS MODIFIER NAMES
 modifier.arcane.name=Arcane
-modifier.worldformed.name=Worldformed
+modifier.worldforged.name=Worldforged
 modifier.unyielding.name=Unyielding
 modifier.elsetouched.name=Elsetouched
 modifier.alfwrought.name=Alfwrought
@@ -1363,7 +1363,7 @@ modifier.enduring.name=Enduring
 
 # TINKERS MODIFIER DESCRIPTIONS
 modifier.arcane.desc=§oIt's learning...§r\nIt'll probably last longer if it learns to use itself right!
-modifier.worldformed.desc=§oAncient and mysterious!§r\nWho knows what this tool could do in the right circumstances?
+modifier.worldforged.desc=§oAncient and mysterious!§r\nWho knows what this tool could do in the right circumstances?
 modifier.unyielding.desc=§oStrong as the earth§r\nIt'll hold on right until the end!
 modifier.elsetouched.desc=§oSomething feels unnatural§r\nIt bears markings you've never seen before...
 modifier.alfwrought.desc=§oFine craftmanship§r\nElves are good at metal forging, apparently. Time to imitate their designs!

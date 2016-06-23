@@ -11,16 +11,12 @@
 package vazkii.botania.common.integration.tinkers;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
-import slimeknights.mantle.item.ItemBlockMeta;
-import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.smeltery.block.BlockMolten;
 import vazkii.botania.client.lib.LibResources;
-import vazkii.botania.common.item.block.ItemBlockMod;
 
 import java.util.Locale;
 
@@ -31,7 +27,7 @@ public class FluidsRegistrationHelper {
     }
 
     public static <T extends Block> T registerBlock(T block, String name) {
-        if(!name.equals(name.toLowerCase(Locale.US))) {
+        if (!name.equals(name.toLowerCase(Locale.US))) {
             throw new IllegalArgumentException(String.format("Unlocalized names need to be all lowercase! Block: %s", name));
         }
 

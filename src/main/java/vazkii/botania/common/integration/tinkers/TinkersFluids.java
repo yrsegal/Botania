@@ -2,28 +2,20 @@
  * This class was created by <WireSegal>. It's distributed as
  * part of the Botania Mod. Get the Source Code in github:
  * https://github.com/Vazkii/Botania
- *
+ * <p>
  * Botania is Open Source and distributed under the
  * Botania License: http://botaniamod.net/license.php
- *
+ * <p>
  * File Created @ [Jun 22, 2016, 1:30:05 AM (GMT)]
  */
 package vazkii.botania.common.integration.tinkers;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.SidedProxy;
-import slimeknights.tconstruct.common.CommonProxy;
-import slimeknights.tconstruct.library.MaterialIntegration;
 import slimeknights.tconstruct.library.Util;
 import slimeknights.tconstruct.library.fluid.FluidMolten;
-import slimeknights.tconstruct.library.materials.Material;
-import slimeknights.tconstruct.shared.TinkerFluids;
-import vazkii.botania.client.lib.LibResources;
 import vazkii.botania.common.lib.LibTinkersNames;
-import vazkii.botania.common.lib.LibOreDict;
 
 public class TinkersFluids {
 

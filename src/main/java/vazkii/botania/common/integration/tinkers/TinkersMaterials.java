@@ -39,18 +39,18 @@ public class TinkersMaterials {
 
     public static final AbstractTrait arcane = new TraitArcane();
 
-//    public static final AbstractTrait worldformed = new TraitWorldformed();
+    public static final AbstractTrait worldforged = new TraitWorldforged();
     public static final AbstractTrait unyielding = new TraitUnyielding();
 
-//    public static final AbstractTrait elsetouched = new TraitElsetouched();
+    public static final AbstractTrait elsetouched = new TraitElsetouched();
     public static final AbstractTrait alfwrought = new TraitAlfwrought();
 
     public static final AbstractTrait regrowth = new TraitRegrowth();
 
-//    public static final AbstractTrait idealistic = new TraitIdealistic();
+    public static final AbstractTrait idealistic = new TraitIdealistic();
     public static final AbstractTrait stargazer = new TraitStargazer();
 
-//    public static final AbstractTrait elemental = new TraitElemental();
+    public static final AbstractTrait elemental = new TraitElemental();
     public static final AbstractTrait enduring = new TraitEnduring();
 
     public static Material manasteel = mat(LibTinkersNames.MANASTEEL, MANASTEEL_COLOR);
@@ -75,7 +75,7 @@ public class TinkersMaterials {
         terrasteel.addItem(LibOreDict.TERRA_STEEL, 1, Material.VALUE_Ingot);
         terrasteel.setRepresentativeItem(new ItemStack(ModItems.manaResource, 1, 4));
         terrasteel.setRenderInfo(new MaterialRenderInfo.Metal(terrasteel.materialTextColor, 0.25f, 0.5f, -0.1f));
-//        terrasteel.addTrait(worldformed, HeadMaterialStats.TYPE);
+        terrasteel.addTrait(worldforged, HeadMaterialStats.TYPE);
         terrasteel.addTrait(unyielding);
         TinkerRegistry.addMaterialStats(terrasteel,
                 new HeadMaterialStats(540, 7.00f, 6.00f, COBALT),
@@ -85,7 +85,7 @@ public class TinkersMaterials {
         elementium.addItem(LibOreDict.ELEMENTIUM, 1, Material.VALUE_Ingot);
         elementium.setRepresentativeItem(new ItemStack(ModItems.manaResource, 1, 7));
         elementium.setRenderInfo(new MaterialRenderInfo.Metal(elementium.materialTextColor, 0.25f, 0.5f, -0.1f));
-//        elementium.addTrait(elsetouched, HeadMaterialStats.TYPE);
+        elementium.addTrait(elsetouched, HeadMaterialStats.TYPE);
         elementium.addTrait(alfwrought);
         TinkerRegistry.addMaterialStats(elementium,
                 new HeadMaterialStats(204, 6.00f, 4.00f, OBSIDIAN),
@@ -110,7 +110,7 @@ public class TinkersMaterials {
         dreamwood.addItem(LibOreDict.DREAMWOOD_TWIG, 1, Material.VALUE_Ingot * 2);
         dreamwood.setRepresentativeItem(new ItemStack(ModItems.manaResource, 1, 13));
         dreamwood.setRenderInfo(dreamwood.materialTextColor);
-//        dreamwood.addTrait(idealistic, HeadMaterialStats.TYPE);
+        dreamwood.addTrait(idealistic, HeadMaterialStats.TYPE);
         dreamwood.addTrait(stargazer);
         TinkerRegistry.addMaterialStats(dreamwood,
                 new HeadMaterialStats(15, 2.00f, 2.00f, STONE),
@@ -120,7 +120,7 @@ public class TinkersMaterials {
         livingrock.setCraftable(true);
         livingrock.addItem(LibOreDict.LIVING_ROCK, 1, Material.VALUE_Ingot);
         livingrock.setRenderInfo(livingrock.materialTextColor);
-//        livingrock.addTrait(elemental, HeadMaterialStats.TYPE);
+        livingrock.addTrait(elemental, HeadMaterialStats.TYPE);
         livingrock.addTrait(enduring);
         TinkerRegistry.addMaterialStats(livingrock,
                 new HeadMaterialStats(60, 4.00f, 2.90f, IRON),

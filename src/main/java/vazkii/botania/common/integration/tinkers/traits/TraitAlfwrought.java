@@ -10,16 +10,12 @@
  */
 package vazkii.botania.common.integration.tinkers.traits;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import slimeknights.tconstruct.library.traits.AbstractTrait;
 import slimeknights.tconstruct.library.utils.TagUtil;
 import slimeknights.tconstruct.library.utils.Tags;
 import slimeknights.tconstruct.library.utils.ToolHelper;
-import slimeknights.tconstruct.tools.traits.TraitProgressiveStats;
 import vazkii.botania.common.integration.tinkers.TinkersMaterials;
 
 public class TraitAlfwrought extends AbstractTrait {

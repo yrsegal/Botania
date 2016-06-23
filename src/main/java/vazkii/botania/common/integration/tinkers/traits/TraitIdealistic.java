@@ -6,7 +6,7 @@
  * Botania is Open Source and distributed under the
  * Botania License: http://botaniamod.net/license.php
  * <p>
- * File Created @ [Jun 22, 2016, 14:22:34 AM (GMT)]
+ * File Created @ [Jun 22, 2016, 15:51:34 AM (GMT)]
  */
 package vazkii.botania.common.integration.tinkers.traits;
 
@@ -14,34 +14,30 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import slimeknights.tconstruct.library.traits.AbstractTrait;
-import slimeknights.tconstruct.library.utils.ToolHelper;
 import vazkii.botania.common.integration.tinkers.TinkersMaterials;
 
-public class TraitUnyielding extends AbstractTrait {
-
-    public TraitUnyielding() {
-        super("unyielding", TinkersMaterials.TERRASTEEL_COLOR);
-    }
-
-    @Override
-    public int onToolDamage(ItemStack tool, int damage, int newDamage, EntityLivingBase entity) {
-        if (ToolHelper.getCurrentDurability(tool) >= 5f) return newDamage;
-        float chance = 0.75f;
-        return Math.random() <= chance ? 0 : newDamage;
+public class TraitIdealistic extends AbstractTrait {
+    public TraitIdealistic() {
+        super("idealistic", TinkersMaterials.DREAMWOOD_COLOR);
     }
 
     @Override
     public float damage(ItemStack tool, EntityLivingBase player, EntityLivingBase target, float damage, float newDamage, boolean isCritical) {
-        if (ToolHelper.getCurrentDurability(tool) < 5f)
-            newDamage /= 2.5;
+        if (target.getHealth() <= 10) return newDamage;
 
-        return super.damage(tool, player, target, damage, newDamage, isCritical);
+        return newDamage + (target.getHealth() - 10) / 5;
     }
 
     @Override
     public void miningSpeed(ItemStack tool, PlayerEvent.BreakSpeed event) {
-        if (ToolHelper.getCurrentDurability(tool) < 5f)
-            event.setNewSpeed(event.getNewSpeed() / 2.5f);
+        float hardness = event.getState().getBlockHardness(event.getEntityPlayer().worldObj, event.getPos());
+        if (hardness == 0.0F)
+            event.setNewSpeed(1.0F);
+        else if (hardness < 5.0F)
+            event.setNewSpeed(0.075F * event.getNewSpeed());
+        else if (hardness < 20.0F)
+            event.setNewSpeed(0.375F * event.getNewSpeed() + hardness);
+        else
+            event.setNewSpeed(3.375F * event.getNewSpeed() + hardness);
     }
 }
-

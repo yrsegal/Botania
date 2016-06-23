@@ -11,20 +11,10 @@
 package vazkii.botania.common.integration.tinkers.traits;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.Sys;
-import slimeknights.tconstruct.library.TinkerRegistry;
-import slimeknights.tconstruct.library.tools.ToolCore;
 import slimeknights.tconstruct.library.traits.AbstractTrait;
-import slimeknights.tconstruct.library.traits.ITrait;
-import slimeknights.tconstruct.library.utils.TagUtil;
 import vazkii.botania.common.integration.tinkers.TinkersMaterials;
 
 public class TraitStargazer extends AbstractTrait {
@@ -37,8 +27,7 @@ public class TraitStargazer extends AbstractTrait {
         float angle = MathHelper.cos(entity.worldObj.getCelestialAngleRadians(0));
         boolean nightTime = angle < 0;
         boolean canSeeSky = entity.worldObj.canBlockSeeSky(entity.getPosition());
-        boolean ret = nightTime && canSeeSky;
-        return ret;
+        return nightTime && canSeeSky;
     }
 
     @Override
@@ -54,7 +43,7 @@ public class TraitStargazer extends AbstractTrait {
 
     @Override
     public int onToolDamage(ItemStack tool, int damage, int newDamage, EntityLivingBase entity) {
-        return isStargazing(entity) ? 0 : newDamage;
+        return isStargazing(entity) && Math.random() < 0.5f ? 0 : newDamage;
     }
 
 
