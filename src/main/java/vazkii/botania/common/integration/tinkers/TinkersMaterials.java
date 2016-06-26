@@ -11,6 +11,9 @@
 package vazkii.botania.common.integration.tinkers;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import slimeknights.tconstruct.TinkerIntegration;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.client.MaterialRenderInfo;
@@ -65,7 +68,6 @@ public class TinkersMaterials {
     public static void init() {
         manasteel.addItem(LibOreDict.MANA_STEEL, 1, Material.VALUE_Ingot);
         manasteel.setRepresentativeItem(new ItemStack(ModItems.manaResource, 1, 0));
-        manasteel.setRenderInfo(new MaterialRenderInfo.Metal(manasteel.materialTextColor, 0.25f, 0.5f, -0.1f));
         manasteel.addTrait(arcane);
         TinkerRegistry.addMaterialStats(manasteel,
                 new HeadMaterialStats(204, 6.00f, 4.00f, OBSIDIAN),
@@ -74,7 +76,6 @@ public class TinkersMaterials {
 
         terrasteel.addItem(LibOreDict.TERRA_STEEL, 1, Material.VALUE_Ingot);
         terrasteel.setRepresentativeItem(new ItemStack(ModItems.manaResource, 1, 4));
-        terrasteel.setRenderInfo(new MaterialRenderInfo.Metal(terrasteel.materialTextColor, 0.25f, 0.5f, -0.1f));
         terrasteel.addTrait(worldforged, HeadMaterialStats.TYPE);
         terrasteel.addTrait(unyielding);
         TinkerRegistry.addMaterialStats(terrasteel,
@@ -84,7 +85,6 @@ public class TinkersMaterials {
 
         elementium.addItem(LibOreDict.ELEMENTIUM, 1, Material.VALUE_Ingot);
         elementium.setRepresentativeItem(new ItemStack(ModItems.manaResource, 1, 7));
-        elementium.setRenderInfo(new MaterialRenderInfo.Metal(elementium.materialTextColor, 0.25f, 0.5f, -0.1f));
         elementium.addTrait(elsetouched, HeadMaterialStats.TYPE);
         elementium.addTrait(alfwrought);
         TinkerRegistry.addMaterialStats(elementium,
@@ -97,7 +97,6 @@ public class TinkersMaterials {
         livingwood.addItem(LibOreDict.LIVING_WOOD, 1, Material.VALUE_Ingot);
         livingwood.addItem(LibOreDict.LIVINGWOOD_TWIG, 1, Material.VALUE_Ingot * 2);
         livingwood.setRepresentativeItem(new ItemStack(ModItems.manaResource, 1, 3));
-        livingwood.setRenderInfo(livingwood.materialTextColor);
         livingwood.addTrait(regrowth);
         TinkerRegistry.addMaterialStats(livingwood,
                 new HeadMaterialStats(15, 2.00f, 2.00f, STONE),
@@ -109,7 +108,6 @@ public class TinkersMaterials {
         dreamwood.addItem(LibOreDict.DREAM_WOOD, 1, Material.VALUE_Ingot);
         dreamwood.addItem(LibOreDict.DREAMWOOD_TWIG, 1, Material.VALUE_Ingot * 2);
         dreamwood.setRepresentativeItem(new ItemStack(ModItems.manaResource, 1, 13));
-        dreamwood.setRenderInfo(dreamwood.materialTextColor);
         dreamwood.addTrait(idealistic, HeadMaterialStats.TYPE);
         dreamwood.addTrait(stargazer);
         TinkerRegistry.addMaterialStats(dreamwood,
@@ -119,7 +117,6 @@ public class TinkersMaterials {
 
         livingrock.setCraftable(true);
         livingrock.addItem(LibOreDict.LIVING_ROCK, 1, Material.VALUE_Ingot);
-        livingrock.setRenderInfo(livingrock.materialTextColor);
         livingrock.addTrait(elemental, HeadMaterialStats.TYPE);
         livingrock.addTrait(enduring);
         TinkerRegistry.addMaterialStats(livingrock,
@@ -127,12 +124,23 @@ public class TinkersMaterials {
                 new HandleMaterialStats(0.50f, 0),
                 new ExtraMaterialStats(0));
 
+        if (FMLLaunchHandler.side().isClient()) addRenderInfo();
+
         TinkerIntegration.integrate(manasteel, TinkersFluids.manasteel, LibOreDict.MANA_STEEL.replace("ingot", "")).toolforge().integrate();
         TinkerIntegration.integrate(terrasteel, TinkersFluids.terrasteel, LibOreDict.TERRA_STEEL.replace("ingot", "")).toolforge().integrate();
         TinkerIntegration.integrate(elementium, TinkersFluids.elementium, LibOreDict.ELEMENTIUM.replace("ingot", "")).toolforge().integrate();
         TinkerIntegration.integrate(livingwood).integrate();
         TinkerIntegration.integrate(dreamwood).integrate();
         TinkerIntegration.integrate(livingrock).integrate();
+    }
+
+    private static void addRenderInfo() {
+        manasteel.setRenderInfo(new MaterialRenderInfo.Metal(manasteel.materialTextColor, 0.25f, 0.5f, -0.1f));
+        terrasteel.setRenderInfo(new MaterialRenderInfo.Metal(terrasteel.materialTextColor, 0.25f, 0.5f, -0.1f));
+        elementium.setRenderInfo(new MaterialRenderInfo.Metal(elementium.materialTextColor, 0.25f, 0.5f, -0.1f));
+        livingwood.setRenderInfo(livingwood.materialTextColor);
+        dreamwood.setRenderInfo(dreamwood.materialTextColor);
+        livingrock.setRenderInfo(livingrock.materialTextColor);
     }
 
     private static Material mat(String name, int color) {
