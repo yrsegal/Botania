@@ -36,6 +36,12 @@ public class TraitAlfwrought extends AbstractTrait {
         return origTag.getInteger(key);
     }
 
+    private static void setOrigIntTag(ItemStack stack, String key, int value) {
+        NBTTagCompound tag = TagUtil.getToolTag(stack);
+        NBTTagCompound origTag = tag.getCompoundTag(Tags.TOOL_DATA_ORIG);
+        origTag.setInteger(key, value);
+    }
+
     private static void setIntTag(ItemStack stack, String key, int value) {
         NBTTagCompound tag = TagUtil.getToolTag(stack);
 
@@ -45,6 +51,7 @@ public class TraitAlfwrought extends AbstractTrait {
     @Override
     public void onRepair(ItemStack tool, int amount) {
         int newDurability = getIntTag(tool, Tags.DURABILITY) + Math.max(amount, 25);
+        if (getOrigIntTag(tool, Tags.DURABILITY) == 0) setOrigIntTag(tool, Tags.DURABILITY, getIntTag(tool, Tags.DURABILITY));
         if (newDurability / getOrigIntTag(tool, Tags.DURABILITY) > 3) return;
         if (ToolHelper.getCurrentDurability(tool) == 0) {
             setIntTag(tool, Tags.DURABILITY, getIntTag(tool, Tags.DURABILITY) + Math.max(amount, 25));
