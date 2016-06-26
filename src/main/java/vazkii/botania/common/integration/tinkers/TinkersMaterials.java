@@ -117,6 +117,7 @@ public class TinkersMaterials {
 
         livingrock.setCraftable(true);
         livingrock.addItem(LibOreDict.LIVING_ROCK, 1, Material.VALUE_Ingot);
+        livingrock.setRepresentativeItem(new ItemStack(ModBlocks.livingrock));
         livingrock.addTrait(elemental, HeadMaterialStats.TYPE);
         livingrock.addTrait(enduring);
         TinkerRegistry.addMaterialStats(livingrock,
